@@ -1,111 +1,53 @@
-const vscode = require('vscode');
-
-let utils = require('./utils');
+const vscode = require("vscode");
+const utils = require("./utils.js")
 
 function activate(context) {
-
-    let disposable = vscode.commands.registerCommand('phpcompanion.insert_namespace', function () {
-
-        let nsVendor = "";
-
-        let config = vscode.workspace.getConfiguration('phpcompanion');
-
-        if (config.has('vendor')) {
-            if (config.get('vendor') && config.get('vendor').length > 1) {
-                nsVendor = config.get('vendor') + "\\";
-            }
-        }
-
-        let editor = vscode.window.activeTextEditor;
-        let path = editor.document.fileName;
-
-        let ns = utils.getNamespaceFromPath(path)
-
-        if (ns.isLaravel) {
-            editor.edit(eb => {
-                eb.replace(new vscode.Position(editor.selection.active.line, 0), "namespace " + ns.ns + ";");
-            })
-        }
-        else {
-            editor.edit(eb => {
-                eb.replace(new vscode.Position(editor.selection.active.line, 0), "namespace " + nsVendor + ns.ns + ";");
-            })
-        }
-    });
-
-    context.subscriptions.push(disposable);
-
-    let disposable1 = vscode.commands.registerCommand('phpcompanion.generate_class', function () {
-
-        let editor = vscode.window.activeTextEditor;
-        let path = editor.document.fileName;
-
-        let nsVendor = "";
-
-        let config = vscode.workspace.getConfiguration('phpcompanion');
-
-        if (config.has('vendor')) {
-            if (config.get('vendor') && config.get('vendor').length > 1) {
-                nsVendor = config.get('vendor');
-            }
-        }
+    context.subscriptions.push(vscode.commands.registerCommand('phpcompanion.insertNamespace', function () {
+        let editor = vscode.window.activeTextEditor
 
         editor.edit(eb => {
-            eb.replace(new vscode.Position(editor.selection.active.line, 0), utils.generateCode(path, "class", nsVendor));
+            eb.replace(
+                editor.selection,
+                "namespace " + utils.getNamespaceFromPath(editor.document.fileName) + ";"
+            )
         })
+    }))
 
-    });
-
-    context.subscriptions.push(disposable1)
-
-
-    let disposable2 = vscode.commands.registerCommand('phpcompanion.generate_interface', function () {
-
-        let editor = vscode.window.activeTextEditor;
-        let path = editor.document.fileName;
-
-        let nsVendor = "";
-
-        let config = vscode.workspace.getConfiguration('phpcompanion');
-
-        if (config.has('vendor')) {
-            if (config.get('vendor') && config.get('vendor').length > 1) {
-                nsVendor = config.get('vendor');
-            }
-        }
+    context.subscriptions.push(vscode.commands.registerCommand('phpcompanion.generateClass', function () {
+        let editor = vscode.window.activeTextEditor
 
         editor.edit(eb => {
-            eb.replace(new vscode.Position(editor.selection.active.line, 0), utils.generateCode(path, "interface", nsVendor));
+            eb.replace(
+                editor.selection,
+                utils.generateCode(editor.document.fileName, "class")
+            )
         })
+    }))
 
-    });
-
-    context.subscriptions.push(disposable2)
-
-    let disposable3 = vscode.commands.registerCommand('phpcompanion.generate_trait', function () {
-
-        let editor = vscode.window.activeTextEditor;
-        let path = editor.document.fileName;
-
-        let nsVendor = "";
-
-        let config = vscode.workspace.getConfiguration('phpcompanion');
-
-        if (config.has('vendor')) {
-            if (config.get('vendor') && config.get('vendor').length > 1) {
-                nsVendor = config.get('vendor');
-            }
-        }
+    context.subscriptions.push(vscode.commands.registerCommand('phpcompanion.generateInterface', function () {
+        let editor = vscode.window.activeTextEditor
 
         editor.edit(eb => {
-            eb.replace(new vscode.Position(editor.selection.active.line, 0), utils.generateCode(path, "trait", nsVendor));
+            eb.replace(
+                editor.selection,
+                utils.generateCode(editor.document.fileName, "interface")
+            )
         })
+    }))
 
-    });
+    context.subscriptions.push(vscode.commands.registerCommand('phpcompanion.generateTrait', function () {
+        let editor = vscode.window.activeTextEditor
 
-    context.subscriptions.push(disposable3)
+        editor.edit(eb => {
+            eb.replace(
+                editor.selection,
+                utils.generateCode(editor.document.fileName, "trait")
+            )
+        })
+    }))
 }
-exports.activate = activate;
 
 function deactivate() { }
-exports.deactivate = deactivate;
+
+exports.activate = activate
+exports.deactivate = deactivate

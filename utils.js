@@ -1,60 +1,61 @@
-var path = require("path");
+const path = require('path')
+const vscode = require('vscode')
 
-module.exports = {
-    getClassNameFromPath: function (filePath) {
-        return path.basename(filePath).replace(".php", "")
-    },
-    getNamespaceFromPath: function (filePath) {
-        let className = this.getClassNameFromPath(filePath)
+function getVendor() {
+    let config = vscode.workspace.getConfiguration('phpcompanion')
 
-        filePath = filePath.replace(".php", "");
+    if (config.has('vendor') && config.get('vendor') && config.get('vendor').length > 1) {
+        return config.get('vendor')
+    }
 
-        let pathElements = filePath.split(path.sep);
+    return '';
+}
 
-        let srcIndex = pathElements.lastIndexOf("src");
+function getNamespaceFromPath(filePath) {
+    let nsVendor = getVendor()
+    let pathElements = vscode.workspace.asRelativePath(filePath).split(path.sep)
 
-        let indexAddition = 1;
+    if (pathElements.length < 2) {
+        return nsVendor
+    }
 
-        if (srcIndex == -1) {
-            srcIndex = pathElements.lastIndexOf("tests");
-        }
+    let startIndex = 0
 
-        // src dir not found so use it might be Laravel (use app directory instead of src)
-        if (srcIndex === -1) {
-            srcIndex = pathElements.lastIndexOf("app");
-            indexAddition = 0;
-        }
+    if (pathElements[0] === 'src' || pathElements[0] === 'tests') {
+        startIndex = 1;
+    } else if (pathElements[0] === 'app') {
+        nsVendor = '';
+    }
 
-        let namespaceElements = pathElements.slice(srcIndex + indexAddition,
-            pathElements.lastIndexOf(className)).map(pathElement => {
-                // every namespace need to be capitalized
-                return pathElement.charAt(0).toUpperCase() + pathElement.slice(1);
-            })
+    let namespace = pathElements.slice(
+        startIndex,
+        pathElements.length -1
+    ).map(pathElement => {
+        return pathElement.charAt(0).toUpperCase() + pathElement.slice(1)
+    }).join('\\')
 
-        return {
-            isLaravel: (indexAddition == 0) ? true : false,
-            ns: namespaceElements.join("\\")
-        };
-    },
-    generateCode: function (filePath, prefix = "class", nsVendor = "") {
-        let ns = this.getNamespaceFromPath(filePath)
-        let cn = this.getClassNameFromPath(filePath)
+    if (nsVendor.length > 0) {
+        namespace = nsVendor + '\\' + namespace
+    }
 
-        let namespace = ns.ns
+    return namespace
+}
 
-        if (nsVendor.length > 1 && !ns.isLaravel) {
-            namespace = nsVendor + "\\" + namespace
-        }
+function generateCode(filePath, prefix = 'class') {
+    let namespace = this.getNamespaceFromPath(filePath)
+    let className = path.basename(filePath).replace('.php', '')
 
-        return `<?php
+    return `<?php
 
 declare(strict_types=1);
 
 namespace ${namespace};
 
-${prefix} ${cn}
+${prefix} ${className}
 {
 }
-`;
-    }
+`
 }
+
+exports.getNamespaceFromPath = getNamespaceFromPath
+exports.generateCode = generateCode
