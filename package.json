@@ -1,0 +1,53 @@
+{
+	"name": "vs-extension",
+	"displayName": "VS Custom extension",
+	"version": "1.0.0",
+	"description": "VS Custom extension",
+	"author": "Findel <findel@free.fr>",
+	"publisher": "blanc-frederic",
+	"engines": {
+		"vscode": "^1.34.0"
+	},
+	"activationEvents": [
+		"onCommand:phpcompanion.generate_class",
+		"onCommand:phpcompanion.generate_interface",
+		"onCommand:phpcompanion.insert_namespace",
+		"onCommand:phpcompanion.generate_trait"
+	],
+	"main": "./extension",
+	"contributes": {
+		"commands": [
+			{
+				"command": "phpcompanion.insert_namespace",
+				"title": "Insert PHP Namespace"
+			},
+			{
+				"command": "phpcompanion.generate_class",
+				"title": "Generate PHP Class"
+			},
+			{
+				"command": "phpcompanion.generate_interface",
+				"title": "Generate PHP Interface"
+			},
+			{
+				"command": "phpcompanion.generate_trait",
+				"title": "Generate PHP Trait"
+			}
+		],
+		"configuration": {
+			"type": "object",
+			"title": "Custom Extension",
+			"properties": {
+				"phpcompanion.vendor": {
+					"type": "string",
+					"default": null,
+					"description": "Specifies vendor which is applied before every namespace."
+				}
+			}
+		}
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/blanc-frederic/vs-extension.git"
+	  }
+}
