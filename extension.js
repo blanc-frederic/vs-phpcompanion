@@ -1,49 +1,29 @@
-const vscode = require("vscode");
-const utils = require("./utils.js")
+const vscode = require('vscode');
+const utils = require('./utils')
 
 function activate(context) {
     context.subscriptions.push(vscode.commands.registerCommand('phpcompanion.insertNamespace', function () {
-        let editor = vscode.window.activeTextEditor
-
-        editor.edit(eb => {
-            eb.replace(
-                editor.selection,
-                "namespace " + utils.getNamespaceFromPath(editor.document.fileName) + ";"
-            )
-        })
+        utils.replaceSelectionWith('namespace')
     }))
 
     context.subscriptions.push(vscode.commands.registerCommand('phpcompanion.generateClass', function () {
-        let editor = vscode.window.activeTextEditor
-
-        editor.edit(eb => {
-            eb.replace(
-                editor.selection,
-                utils.generateCode(editor.document.fileName, "class")
-            )
-        })
+        utils.replaceSelectionWith('class')
     }))
-
     context.subscriptions.push(vscode.commands.registerCommand('phpcompanion.generateInterface', function () {
-        let editor = vscode.window.activeTextEditor
-
-        editor.edit(eb => {
-            eb.replace(
-                editor.selection,
-                utils.generateCode(editor.document.fileName, "interface")
-            )
-        })
+        utils.replaceSelectionWith('interface')
+    }))
+    context.subscriptions.push(vscode.commands.registerCommand('phpcompanion.generateTrait', function () {
+        utils.replaceSelectionWith('trait')
     }))
 
-    context.subscriptions.push(vscode.commands.registerCommand('phpcompanion.generateTrait', function () {
-        let editor = vscode.window.activeTextEditor
-
-        editor.edit(eb => {
-            eb.replace(
-                editor.selection,
-                utils.generateCode(editor.document.fileName, "trait")
-            )
-        })
+    context.subscriptions.push(vscode.commands.registerCommand('phpcompanion.newPHPClass', function (folder) {
+        utils.createPHPFile('class', folder)
+    }))
+    context.subscriptions.push(vscode.commands.registerCommand('phpcompanion.newPHPInterface', function (folder) {
+        utils.createPHPFile('interface', folder)
+    }))
+    context.subscriptions.push(vscode.commands.registerCommand('phpcompanion.newPHPTrait', function (folder) {
+        utils.createPHPFile('trait', folder)
     }))
 }
 

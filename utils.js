@@ -1,6 +1,46 @@
 const path = require('path')
 const vscode = require('vscode')
 
+function createPHPFile(category, folder) {
+    if (!folder || !folder.fsPath) {
+        return
+    }
+
+    vscode.window.showInputBox({ prompt: category + ' name' }).then((basename) => {
+        if (basename === undefined || basename.length < 1) {
+            return
+        }
+
+        const fileName = folder.fsPath + '/' + basename + '.php'
+
+        vscode.workspace.fs.writeFile(
+            vscode.Uri.file(fileName),
+            new TextEncoder().encode(
+                generateCode(fileName, category)
+            )
+        ).then(() => {
+            vscode.workspace.openTextDocument(fileName).then(
+                document => vscode.window.showTextDocument(document)
+            )
+        })
+    })
+}
+
+function replaceSelectionWith(category) {
+    const editor = vscode.window.activeTextEditor
+
+    let content = ''
+    if (category === 'namespace') {
+        content = 'namespace ' + getNamespaceFromPath(editor.document.fileName) + ';'
+    } else {
+        content = generateCode(editor.document.fileName, category)
+    }
+
+    editor.edit(eb => {
+        eb.replace(editor.selection, content)
+    })
+}
+
 function getVendor() {
     let config = vscode.workspace.getConfiguration('phpcompanion')
 
@@ -29,7 +69,7 @@ function getNamespaceFromPath(filePath) {
 
     let namespace = pathElements.slice(
         startIndex,
-        pathElements.length -1
+        pathElements.length - 1
     ).map(pathElement => {
         return pathElement.charAt(0).toUpperCase() + pathElement.slice(1)
     }).join('\\')
@@ -42,8 +82,13 @@ function getNamespaceFromPath(filePath) {
 }
 
 function generateCode(filePath, prefix = 'class') {
-    let namespace = this.getNamespaceFromPath(filePath)
+    let namespace = getNamespaceFromPath(filePath)
     let className = path.basename(filePath).replace('.php', '')
+
+    if (className.substring(className.length - 4) === 'Test' && prefix === 'class') {
+        prefix = 'use PHPUnit\\Framework\\TestCase;\n\n' + prefix
+        className += ' extends TestCase'
+    }
 
     return `<?php
 
@@ -53,9 +98,10 @@ namespace ${namespace};
 
 ${prefix} ${className}
 {
+    
 }
 `
 }
 
-exports.getNamespaceFromPath = getNamespaceFromPath
-exports.generateCode = generateCode
+exports.createPHPFile = createPHPFile
+exports.replaceSelectionWith = replaceSelectionWith
