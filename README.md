@@ -22,12 +22,9 @@ Corresponding commands exists to create new file, you will be prompted for paren
 - `new PHP Interface`
 - `new PHP Trait`
 
-Commands also exists for inserting namespace or generate class, interface or trait code, **in current editor** :
+Commands also exists for inserting namespace **in current editor** only in PHP file:
 
 - `Insert namespace`
-- `Generate code for PHP Class`
-- `Generate code for PHP Interface`
-- `Generate code for PHP Trait`
 
 Configuration
 -------------

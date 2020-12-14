@@ -36,27 +36,23 @@ function createPHPFile(category, folder) {
     })
 }
 
+function replaceSelectionWithNamespace() {
+    const editor = vscode.window.activeTextEditor
+
+    editor.edit(eb => {
+        eb.replace(
+            editor.selection,
+            'namespace ' + getNamespaceFromPath(editor.document.fileName) + ';'
+        )
+    })
+}
+
 function askParentFolder() {
     return vscode.window.showOpenDialog({
         prompt: "Select folder where file will be created",
         canSelectFiles: false,
         canSelectFolders: true,
         openLabel: "Create here"
-    })
-}
-
-function replaceSelectionWith(category) {
-    const editor = vscode.window.activeTextEditor
-
-    let content = ''
-    if (category === 'namespace') {
-        content = 'namespace ' + getNamespaceFromPath(editor.document.fileName) + ';'
-    } else {
-        content = generate(category, editor.document.fileName)
-    }
-
-    editor.edit(eb => {
-        eb.replace(editor.selection, content)
     })
 }
 
@@ -124,4 +120,4 @@ function generate(category, filePath) {
 }
 
 exports.createPHPFile = createPHPFile
-exports.replaceSelectionWith = replaceSelectionWith
+exports.replaceSelectionWithNamespace = replaceSelectionWithNamespace

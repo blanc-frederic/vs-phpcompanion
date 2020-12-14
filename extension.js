@@ -3,17 +3,7 @@ const generator = require('./generator')
 
 function activate(context) {
     context.subscriptions.push(vscode.commands.registerCommand('phpcompanion.insertNamespace', function () {
-        generator.replaceSelectionWith('namespace')
-    }))
-
-    context.subscriptions.push(vscode.commands.registerCommand('phpcompanion.generateClass', function () {
-        generator.replaceSelectionWith('class')
-    }))
-    context.subscriptions.push(vscode.commands.registerCommand('phpcompanion.generateInterface', function () {
-        generator.replaceSelectionWith('interface')
-    }))
-    context.subscriptions.push(vscode.commands.registerCommand('phpcompanion.generateTrait', function () {
-        generator.replaceSelectionWith('trait')
+        generator.replaceSelectionWithNamespace()
     }))
 
     context.subscriptions.push(vscode.commands.registerCommand('phpcompanion.newPHPClass', function (folder) {

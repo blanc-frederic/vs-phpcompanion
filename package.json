@@ -10,10 +10,7 @@
 		"vscode": "^1.34.0"
 	},
 	"activationEvents": [
-		"onCommand:phpcompanion.generateClass",
-		"onCommand:phpcompanion.generateInterface",
 		"onCommand:phpcompanion.insertNamespace",
-		"onCommand:phpcompanion.generateTrait",
 		"onCommand:phpcompanion.newPHPClass",
 		"onCommand:phpcompanion.newPHPInterface",
 		"onCommand:phpcompanion.newPHPTrait"
@@ -24,18 +21,6 @@
 			{
 				"command": "phpcompanion.insertNamespace",
 				"title": "Insert Namespace"
-			},
-			{
-				"command": "phpcompanion.generateClass",
-				"title": "Generate code for PHP Class"
-			},
-			{
-				"command": "phpcompanion.generateInterface",
-				"title": "Generate code for PHP Interface"
-			},
-			{
-				"command": "phpcompanion.generateTrait",
-				"title": "Generate code for PHP Trait"
 			},
 			{
 				"command": "phpcompanion.newPHPClass",
@@ -51,18 +36,27 @@
 			}
 		],
 		"menus": {
+			"commandPalette": [
+				{
+					"command": "phpcompanion.insertNamespace",
+					"when": "resourceLangId == php"
+				}
+			],
 			"explorer/context": [
 				{
 					"command": "phpcompanion.newPHPClass",
-					"when": "explorerResourceIsFolder"
+					"when": "explorerResourceIsFolder",
+					"group": "navigation@7"
 				},
 				{
 					"command": "phpcompanion.newPHPInterface",
-					"when": "explorerResourceIsFolder"
+					"when": "explorerResourceIsFolder",
+					"group": "navigation@8"
 				},
 				{
 					"command": "phpcompanion.newPHPTrait",
-					"when": "explorerResourceIsFolder"
+					"when": "explorerResourceIsFolder",
+					"group": "navigation@9"
 				}
 			],
 			"editor/context": [
