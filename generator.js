@@ -3,26 +3,45 @@ const vscode = require('vscode')
 
 function createPHPFile(category, folder) {
     if (!folder || !folder.fsPath) {
+        askParentFolder().then(folder => {
+            if (folder !== undefined) {
+                createPHPFile(category, vscode.Uri.parse(folder))
+            }
+        })
         return
     }
 
-    vscode.window.showInputBox({ prompt: category + ' name' }).then((basename) => {
-        if (basename === undefined || basename.length < 1) {
+    vscode.window.showInputBox({
+        prompt: category + ' name'
+    }).then((name) => {
+        if (name === undefined || name.length < 1) {
             return
         }
 
-        const fileName = folder.fsPath + '/' + basename + '.php'
+        const fileName = vscode.Uri.file(folder.fsPath + '/' + name + '.php')
 
-        vscode.workspace.fs.writeFile(
-            vscode.Uri.file(fileName),
-            new TextEncoder().encode(
-                generate(category, fileName)
+        vscode.workspace.fs.stat(fileName).then(() => {
+            vscode.window.showErrorMessage(
+                'File "' + vscode.workspace.asRelativePath(fileName) + '" already exists'
             )
-        ).then(() => {
-            vscode.workspace.openTextDocument(fileName).then(
-                document => vscode.window.showTextDocument(document)
-            )
+        }, error => {
+            vscode.workspace.fs.writeFile(fileName, new TextEncoder().encode(
+                generate(category, fileName.fsPath)
+            )).then(() => {
+                vscode.workspace.openTextDocument(fileName).then(
+                    document => vscode.window.showTextDocument(document)
+                )
+            })
         })
+    })
+}
+
+function askParentFolder() {
+    return vscode.window.showOpenDialog({
+        prompt: "Select folder where file will be created",
+        canSelectFiles: false,
+        canSelectFolders: true,
+        openLabel: "Create here"
     })
 }
 
@@ -100,7 +119,7 @@ function generate(category, filePath) {
 
     return '<?php\n\n'
         + 'declare(strict_types=1);\n\n'
-        + 'namespace ' + namespace + '\n\n'
+        + 'namespace ' + namespace + ';\n\n'
         + category + ' ' + className + '\n'
         + '{\n    \n}\n';
 }
