@@ -41,14 +41,14 @@ function replaceSelectionWith(category) {
     })
 }
 
-function getConfig(name) {
+function getConfig(name, defaultValue = '') {
     let config = vscode.workspace.getConfiguration('phpcompanion')
 
     if (config.has(name) && config.get(name) && config.get(name).length > 1) {
         return config.get(name)
     }
 
-    return '';
+    return defaultValue;
 }
 
 function getNamespaceFromPath(filePath) {
@@ -89,7 +89,11 @@ function generate(category, filePath) {
     let namespace = getNamespaceFromPath(filePath)
     let className = path.basename(filePath).replace('.php', '')
 
-    if (className.substring(className.length - 4) === 'Test' && category === 'class') {
+    if (
+        getConfig('detectTestCase', true)
+        && category === 'class'
+        && className.substring(className.length - 4) === 'Test'
+    ) {
         category = 'use PHPUnit\\Framework\\TestCase;\n\n' + category
         className += ' extends TestCase'
     }

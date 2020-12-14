@@ -74,12 +74,17 @@
 		},
 		"configuration": {
 			"type": "object",
-			"title": "Custom Extension",
+			"title": "PHP Companion",
 			"properties": {
 				"phpcompanion.vendor": {
 					"type": "string",
 					"default": null,
-					"description": "Specifies default vendor which is applied before every namespace."
+					"description": "Specifies default vendor if not extracted from composer.json"
+				},
+				"phpcompanion.detectTestCase": {
+					"type": "boolean",
+					"default": true,
+					"description": "Extends PHPUnit TestCase for generated classes with \"Test\" suffix"
 				}
 			}
 		}
