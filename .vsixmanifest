@@ -5,10 +5,10 @@
   xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011"
 >
   <Metadata>
-    <Identity Language="en-US" Id="vs-extension" Version="1.0.0" Publisher="blanc-frederic"/>
-    <DisplayName>VS Custom extension</DisplayName>
-    <Description xml:space="preserve">Some usefull stuff</Description>
-    <Tags></Tags>
+    <Identity Language="en-US" Id="vs-phpcompanion" Version="1.0.0" Publisher="blanc-frederic"/>
+    <DisplayName>VS PHP Companion</DisplayName>
+    <Description xml:space="preserve">Some usefull tools for PHP</Description>
+    <Tags>PHP</Tags>
     <Categories></Categories>
     <GalleryFlags>Public</GalleryFlags>
     <Badges></Badges>
@@ -17,9 +17,9 @@
       <Property Id="Microsoft.VisualStudio.Code.ExtensionDependencies" Value="" />
       <Property Id="Microsoft.VisualStudio.Code.ExtensionPack" Value="" />
       <Property Id="Microsoft.VisualStudio.Code.LocalizedLanguages" Value="" />
-      <Property Id="Microsoft.VisualStudio.Services.Links.Source" Value="https://github.com/blanc-frederic/vs-extension.git" />
-      <Property Id="Microsoft.VisualStudio.Services.Links.Getstarted" Value="https://github.com/blanc-frederic/vs-extension.git" />
-      <Property Id="Microsoft.VisualStudio.Services.Links.GitHub" Value="https://github.com/blanc-frederic/vs-extension.git" />
+      <Property Id="Microsoft.VisualStudio.Services.Links.Source" Value="https://github.com/blanc-frederic/vs-phpcompanion.git" />
+      <Property Id="Microsoft.VisualStudio.Services.Links.Getstarted" Value="https://github.com/blanc-frederic/vs-phpcompanion.git" />
+      <Property Id="Microsoft.VisualStudio.Services.Links.GitHub" Value="https://github.com/blanc-frederic/vs-phpcompanion.git" />
       <Property Id="Microsoft.VisualStudio.Services.GitHubFlavoredMarkdown" Value="true" />
     </Properties>
   </Metadata>

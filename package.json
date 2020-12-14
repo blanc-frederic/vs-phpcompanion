@@ -2,7 +2,7 @@
 	"name": "vs-phpcompanion",
 	"displayName": "VS PHP Companion",
 	"version": "1.0.0",
-	"description": "VS PHP Companion",
+	"description": "Some usefull tools for PHP",
 	"icon": "resources/icon.png",
 	"author": "Fred Blanc <findel@free.fr>",
 	"publisher": "blanc-frederic",
@@ -91,6 +91,6 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/blanc-frederic/vs-extension.git"
+		"url": "https://github.com/blanc-frederic/vs-phpcompanion.git"
 	}
 }
