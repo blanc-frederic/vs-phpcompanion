@@ -1,5 +1,7 @@
 const path = require('path')
 const vscode = require('vscode')
+const config = require('config')
+const namespace = require('./namespace')
 
 function createPHPFile(category, folder) {
     if (!folder || !folder.fsPath) {
@@ -42,7 +44,7 @@ function replaceSelectionWithNamespace() {
     editor.edit(eb => {
         eb.replace(
             editor.selection,
-            'namespace ' + getNamespaceFromPath(editor.document.fileName) + ';'
+            'namespace ' + namespace.getNamespaceFromPath(editor.document.fileName) + ';'
         )
     })
 }
@@ -56,57 +58,14 @@ function askParentFolder() {
     })
 }
 
-function getConfig(name, defaultValue = '') {
-    const config = vscode.workspace.getConfiguration('phpcompanion')
-
-    if (config.has(name) && config.get(name) && config.get(name).length > 1) {
-        return config.get(name)
-    }
-
-    return defaultValue
-}
-
-function getNamespaceFromPath(filePath) {
-    let nsVendor = getConfig('vendor')
-    const pathElements = vscode.workspace.asRelativePath(filePath).split(path.sep)
-
-    if (pathElements.length < 2) {
-        return nsVendor
-    }
-
-    let startIndex = 0
-
-    if (pathElements[0] === 'src' || pathElements[0] === 'tests') {
-        startIndex = 1;
-    } else if (pathElements[0] === 'app') {
-        nsVendor = '';
-    }
-
-    let namespace = pathElements.slice(
-        startIndex,
-        pathElements.length - 1
-    ).map(pathElement => {
-        return pathElement.charAt(0).toUpperCase() + pathElement.slice(1)
-    }).join('\\')
-
-    if (nsVendor.length > 0) {
-        if (namespace.length > 0) {
-            return nsVendor + '\\' + namespace
-        } else {
-            return nsVendor
-        }
-    }
-
-    return namespace
-}
-
 function generate(category, filePath) {
     let className = path.basename(filePath).replace('.php', '')
 
     if (
-        getConfig('detectTestCase', true)
+        config.getConfig('detectTestCase', true)
         && category === 'class'
-        && className.substring(className.length - 4) === 'Test'
+        && className !== 'Test'
+        && className.endsWith('Test')
     ) {
         category = 'use PHPUnit\\Framework\\TestCase;\n\n' + category
         className += ' extends TestCase'
@@ -114,7 +73,7 @@ function generate(category, filePath) {
 
     return '<?php\n\n'
         + 'declare(strict_types=1);\n\n'
-        + 'namespace ' + getNamespaceFromPath(filePath) + ';\n\n'
+        + 'namespace ' + namespace.getNamespaceFromPath(filePath) + ';\n\n'
         + category + ' ' + className + '\n'
         + '{\n    \n}\n'
 }
