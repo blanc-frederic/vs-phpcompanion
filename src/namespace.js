@@ -1,19 +1,24 @@
 const vscode = require('vscode')
 const path = require('path')
 const fs = require('fs')
-const config = require('config')
+const config = require('./config')
 
 function getNamespaceFromPath(filename) {
     const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(filename)).uri.fsPath
     const composerFile = workspaceFolder + path.sep + config.getConfig('composerJson')
     let relativeFilename = vscode.workspace.asRelativePath(filename)
 
-    const content = fs.readFileSync(composerFile)
-    const sources = ['autoload', 'autoload-dev']
+    let content = ''
+    try {
+        content = fs.readFileSync(composerFile)
+    } catch {
+        content = '{}'
+    }
     const composer = JSON.parse(content)
 
     let nsVendor = config.getConfig('vendor')
 
+    const sources = ['autoload', 'autoload-dev']
     for (const s in sources) {
         const env = sources[s]
 
@@ -65,4 +70,4 @@ function getNamespaceFromPath(filename) {
     return namespace
 }
 
-exposts.getNamespaceFromPath = getNamespaceFromPath
+exports.getNamespaceFromPath = getNamespaceFromPath

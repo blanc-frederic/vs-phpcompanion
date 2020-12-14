@@ -1,5 +1,5 @@
 const vscode = require('vscode');
-const generator = require('./generator')
+const generator = require('./src/generator')
 
 function activate(context) {
     context.subscriptions.push(vscode.commands.registerCommand('phpcompanion.insertNamespace', function () {
