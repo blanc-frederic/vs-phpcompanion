@@ -16,7 +16,7 @@ function createPHPFile(category, folder) {
         vscode.workspace.fs.writeFile(
             vscode.Uri.file(fileName),
             new TextEncoder().encode(
-                generateCode(fileName, category)
+                generate(category, fileName)
             )
         ).then(() => {
             vscode.workspace.openTextDocument(fileName).then(
@@ -33,7 +33,7 @@ function replaceSelectionWith(category) {
     if (category === 'namespace') {
         content = 'namespace ' + getNamespaceFromPath(editor.document.fileName) + ';'
     } else {
-        content = generateCode(editor.document.fileName, category)
+        content = generate(category, editor.document.fileName)
     }
 
     editor.edit(eb => {
@@ -41,18 +41,18 @@ function replaceSelectionWith(category) {
     })
 }
 
-function getVendor() {
+function getConfig(name) {
     let config = vscode.workspace.getConfiguration('phpcompanion')
 
-    if (config.has('vendor') && config.get('vendor') && config.get('vendor').length > 1) {
-        return config.get('vendor')
+    if (config.has(name) && config.get(name) && config.get(name).length > 1) {
+        return config.get(name)
     }
 
     return '';
 }
 
 function getNamespaceFromPath(filePath) {
-    let nsVendor = getVendor()
+    let nsVendor = getConfig('vendor')
     let pathElements = vscode.workspace.asRelativePath(filePath).split(path.sep)
 
     if (pathElements.length < 2) {
@@ -75,32 +75,30 @@ function getNamespaceFromPath(filePath) {
     }).join('\\')
 
     if (nsVendor.length > 0) {
-        namespace = nsVendor + '\\' + namespace
+        if (namespace.length > 0) {
+            return nsVendor + '\\' + namespace
+        } else {
+            return nsVendor
+        }
     }
 
     return namespace
 }
 
-function generateCode(filePath, prefix = 'class') {
+function generate(category, filePath) {
     let namespace = getNamespaceFromPath(filePath)
     let className = path.basename(filePath).replace('.php', '')
 
-    if (className.substring(className.length - 4) === 'Test' && prefix === 'class') {
-        prefix = 'use PHPUnit\\Framework\\TestCase;\n\n' + prefix
+    if (className.substring(className.length - 4) === 'Test' && category === 'class') {
+        category = 'use PHPUnit\\Framework\\TestCase;\n\n' + category
         className += ' extends TestCase'
     }
 
-    return `<?php
-
-declare(strict_types=1);
-
-namespace ${namespace};
-
-${prefix} ${className}
-{
-    
-}
-`
+    return '<?php\n\n'
+        + 'declare(strict_types=1);\n\n'
+        + 'namespace ' + namespace + '\n\n'
+        + category + ' ' + className + '\n'
+        + '{\n    \n}\n';
 }
 
 exports.createPHPFile = createPHPFile
