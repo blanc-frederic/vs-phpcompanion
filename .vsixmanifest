@@ -6,10 +6,10 @@
 >
   <Metadata>
     <Identity Language="en-US" Id="vs-phpcompanion" Version="1.0.0" Publisher="blanc-frederic"/>
-    <DisplayName>VS PHP Companion</DisplayName>
+    <DisplayName>PHP Companion</DisplayName>
     <Description xml:space="preserve">Some usefull tools for PHP</Description>
     <Tags>PHP</Tags>
-    <Categories></Categories>
+    <Categories>Other</Categories>
     <GalleryFlags>Public</GalleryFlags>
     <Badges></Badges>
     <Properties>

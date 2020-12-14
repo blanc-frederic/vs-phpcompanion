@@ -1,6 +1,6 @@
 {
 	"name": "vs-phpcompanion",
-	"displayName": "VS PHP Companion",
+	"displayName": "PHP Companion",
 	"version": "1.0.0",
 	"description": "Some usefull tools for PHP",
 	"icon": "resources/icon.png",
@@ -23,19 +23,19 @@
 		"commands": [
 			{
 				"command": "phpcompanion.insertNamespace",
-				"title": "Insert PHP Namespace"
+				"title": "Insert Namespace"
 			},
 			{
 				"command": "phpcompanion.generateClass",
-				"title": "Generate PHP Class"
+				"title": "Generate code for PHP Class"
 			},
 			{
 				"command": "phpcompanion.generateInterface",
-				"title": "Generate PHP Interface"
+				"title": "Generate code for PHP Interface"
 			},
 			{
 				"command": "phpcompanion.generateTrait",
-				"title": "Generate PHP Trait"
+				"title": "Generate code for PHP Trait"
 			},
 			{
 				"command": "phpcompanion.newPHPClass",
@@ -76,6 +76,11 @@
 			"type": "object",
 			"title": "PHP Companion",
 			"properties": {
+				"phpcompanion.composerJson": {
+					"type": "string",
+					"default": "composer.json",
+					"description": "Path to composer.json from workspace rootdir"
+				},
 				"phpcompanion.vendor": {
 					"type": "string",
 					"default": null,

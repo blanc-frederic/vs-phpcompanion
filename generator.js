@@ -61,18 +61,18 @@ function replaceSelectionWith(category) {
 }
 
 function getConfig(name, defaultValue = '') {
-    let config = vscode.workspace.getConfiguration('phpcompanion')
+    const config = vscode.workspace.getConfiguration('phpcompanion')
 
     if (config.has(name) && config.get(name) && config.get(name).length > 1) {
         return config.get(name)
     }
 
-    return defaultValue;
+    return defaultValue
 }
 
 function getNamespaceFromPath(filePath) {
     let nsVendor = getConfig('vendor')
-    let pathElements = vscode.workspace.asRelativePath(filePath).split(path.sep)
+    const pathElements = vscode.workspace.asRelativePath(filePath).split(path.sep)
 
     if (pathElements.length < 2) {
         return nsVendor
@@ -105,7 +105,6 @@ function getNamespaceFromPath(filePath) {
 }
 
 function generate(category, filePath) {
-    let namespace = getNamespaceFromPath(filePath)
     let className = path.basename(filePath).replace('.php', '')
 
     if (
@@ -119,9 +118,9 @@ function generate(category, filePath) {
 
     return '<?php\n\n'
         + 'declare(strict_types=1);\n\n'
-        + 'namespace ' + namespace + ';\n\n'
+        + 'namespace ' + getNamespaceFromPath(filePath) + ';\n\n'
         + category + ' ' + className + '\n'
-        + '{\n    \n}\n';
+        + '{\n    \n}\n'
 }
 
 exports.createPHPFile = createPHPFile
