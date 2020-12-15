@@ -33,11 +33,28 @@ Configuration
 // Path to composer.json from workspace rootdir
 "phpcompanion.composerJson": "composer.json",
 
-// Specifies default vendor if not extracted from composer.json
+// Specifies default vendor if not found in composer.json
 "phpcompanion.vendor": null,
 
-// Extends PHPUnit TestCase for generated classes with "Test" suffix
+// Auto extends PHPUnit TestCase for generated classes with "Test" suffix
 "phpcompanion.detectTestCase": true,
 ```
 
 > Tip : use `File > Preferences > Settings`, and choose `Workspace` to specify a value decicated for current workspace only
+
+FAQ
+---
+
+> How does it detects namespace ?
+
+First, it search for a vendor prefix (stop as soon as one matches) :
+
+1. compare relative filename (from workspace) with composer entries from `autoload/psr-4`
+2. compare relative filename (from workspace) with composer entries from `autoload-dev/psr-4`
+3. phpcompanion.vendor (if set)
+
+Then, append relative path (from workspace root folder) :
+
+- if vendor prefix was extracted from composer, exclude corresponding path prefix from composer
+- else if path starts with `src/` or `tests/`, exclude this prefix from path
+- else if `phpcompanion.vendor` is set and path starts with `app/`, exclude this prefix from path
