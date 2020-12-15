@@ -2,7 +2,7 @@
 	"name": "vs-phpcompanion",
 	"displayName": "PHP Companion",
 	"version": "1.0.0",
-	"description": "Some usefull tools for PHP",
+	"description": "Generate code (php >=7.4) for classes, interfaces and traits",
 	"icon": "resources/icon.png",
 	"author": "Fred Blanc <findel@free.fr>",
 	"publisher": "blanc-frederic",
