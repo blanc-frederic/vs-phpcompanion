@@ -1,7 +1,7 @@
 {
 	"name": "vs-phpcompanion",
 	"displayName": "PHP Companion",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Generate code (php >=7.4) for classes, interfaces and traits",
 	"icon": "resources/icon.png",
 	"author": "Fred Blanc <findel@free.fr>",
