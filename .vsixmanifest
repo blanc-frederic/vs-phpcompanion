@@ -7,7 +7,7 @@
   <Metadata>
     <Identity Language="en-US" Id="vs-phpcompanion" Version="1.0.1" Publisher="blanc-frederic"/>
     <DisplayName>PHP Companion</DisplayName>
-    <Description xml:space="preserve">Generate code (php >=7.4) for classes, interfaces and traits</Description>
+    <Description xml:space="preserve">Generate code for new classes, insert namespace, ...</Description>
     <Tags>PHP</Tags>
     <Categories>Other</Categories>
     <GalleryFlags>Public</GalleryFlags>
