@@ -11,20 +11,14 @@ Only for PHP files : select text, or position cursor, and choose "Insert namespa
 Explorer context menu
 ---------------------
 
-Select "new PHP Class", "new PHP Interface" or "new PHP trait" directly from explorer context menu. You will be prompted for the name
+Select "new PHP Class" directly from explorer context menu. You will be prompted for the name
 
 Commands
 --------
 
-Corresponding commands exists to create new file, you will be prompted for parent folder, then item name : 
+Corresponding commands exists to create new file, you will be prompted for parent folder, then item name : `new PHP Class`
 
-- `new PHP Class`
-- `new PHP Interface`
-- `new PHP Trait`
-
-Commands also exists for inserting namespace **in current editor** only in PHP file:
-
-- `Insert namespace`
+Commands also exists for inserting namespace **in current editor** only in PHP file: `Insert namespace`
 
 Configuration
 -------------

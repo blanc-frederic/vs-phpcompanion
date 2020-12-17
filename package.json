@@ -25,14 +25,6 @@
 			{
 				"command": "phpcompanion.newPHPClass",
 				"title": "New PHP Class"
-			},
-			{
-				"command": "phpcompanion.newPHPInterface",
-				"title": "New PHP Interface"
-			},
-			{
-				"command": "phpcompanion.newPHPTrait",
-				"title": "New PHP Trait"
 			}
 		],
 		"menus": {
@@ -47,16 +39,6 @@
 					"command": "phpcompanion.newPHPClass",
 					"when": "explorerResourceIsFolder",
 					"group": "navigation@7"
-				},
-				{
-					"command": "phpcompanion.newPHPInterface",
-					"when": "explorerResourceIsFolder",
-					"group": "navigation@8"
-				},
-				{
-					"command": "phpcompanion.newPHPTrait",
-					"when": "explorerResourceIsFolder",
-					"group": "navigation@9"
 				}
 			],
 			"editor/context": [
