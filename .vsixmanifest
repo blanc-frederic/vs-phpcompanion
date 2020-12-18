@@ -5,7 +5,7 @@
   xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011"
 >
   <Metadata>
-    <Identity Language="en-US" Id="vs-phpcompanion" Version="1.0.1" Publisher="blanc-frederic"/>
+    <Identity Language="en-US" Id="vs-phpcompanion" Version="1.1.0" Publisher="blanc-frederic"/>
     <DisplayName>PHP Companion</DisplayName>
     <Description xml:space="preserve">Generate code for new classes, insert namespace, ...</Description>
     <Tags>PHP</Tags>

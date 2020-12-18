@@ -7,6 +7,7 @@ function getNamespaceFromPath(filename) {
     let vendorData = getNamespaceFromComposer(filename)
 
     let relativeFilename = vscode.workspace.asRelativePath(filename)
+
     if (vendorData.startsWith.length > 0) {
         relativeFilename = relativeFilename.substr(vendorData.startsWith.length)
     }
@@ -63,11 +64,15 @@ function getNamespaceFromComposer(filename)
 
         if (composer[env] && composer[env]['psr-4']) {
             for (let vendor in composer[env]['psr-4']) {
-                const folder = composer[env]['psr-4'][vendor]
+                let folder = composer[env]['psr-4'][vendor]
 
                 if (relativeFilename.startsWith(folder)) {
                     if (vendor.endsWith('\\')) {
                         vendor = vendor.substr(0, vendor.length -1)
+                    }
+
+                    if (! folder.endsWith('/')) {
+                        folder += '/'
                     }
 
                     return {
