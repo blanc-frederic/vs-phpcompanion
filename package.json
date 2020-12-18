@@ -1,7 +1,7 @@
 {
 	"name": "vs-phpcompanion",
 	"displayName": "PHP Companion",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"description": "Generate code for new classes, insert namespace, ...",
 	"icon": "resources/icon.png",
 	"author": "Fred Blanc <findel@free.fr>",
@@ -11,9 +11,7 @@
 	},
 	"activationEvents": [
 		"onCommand:phpcompanion.insertNamespace",
-		"onCommand:phpcompanion.newPHPClass",
-		"onCommand:phpcompanion.newPHPInterface",
-		"onCommand:phpcompanion.newPHPTrait"
+		"onCommand:phpcompanion.newPHPClass"
 	],
 	"main": "./extension",
 	"contributes": {
