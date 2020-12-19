@@ -11,14 +11,22 @@
 	},
 	"activationEvents": [
 		"onCommand:phpcompanion.insertNamespace",
-		"onCommand:phpcompanion.newPHPClass"
+		"onCommand:phpcompanion.newPHPClass",
+		"onCommand:phpcompanion.launchTests"
 	],
 	"main": "./extension",
 	"contributes": {
 		"commands": [
 			{
+				"title": "Launch tests",
+				"command": "phpcompanion.launchTests",
+				"category": "PHP Companion",
+				"when": "phpcompanionTestsStatus"
+			},
+			{
 				"command": "phpcompanion.insertNamespace",
-				"title": "Insert Namespace"
+				"title": "Insert Namespace",
+				"when": "resourceLangId == php"
 			},
 			{
 				"command": "phpcompanion.newPHPClass",
@@ -66,7 +74,13 @@
 					"description": "Extends PHPUnit TestCase for generated classes with \"Test\" suffix"
 				}
 			}
-		}
+		},
+		"keybindings": [
+			{
+				"command": "phpcompanion.launchTests",
+				"key": "F9"
+			}
+		]
 	},
 	"repository": {
 		"type": "git",

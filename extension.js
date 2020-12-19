@@ -1,20 +1,24 @@
-const vscode = require('vscode');
+const vscode = require('vscode')
 const generator = require('./src/generator')
+const tests = require('./src/tests')
 
 function activate(context) {
-    context.subscriptions.push(vscode.commands.registerCommand('phpcompanion.insertNamespace', function () {
-        generator.replaceSelectionWithNamespace()
-    }))
+    context.subscriptions.push(vscode.commands.registerCommand(
+        'phpcompanion.insertNamespace',
+        () => generator.replaceSelectionWithNamespace()
+    ))
 
-    context.subscriptions.push(vscode.commands.registerCommand('phpcompanion.newPHPClass', function (folder) {
-        generator.createPHPFile('class', folder)
-    }))
-    context.subscriptions.push(vscode.commands.registerCommand('phpcompanion.newPHPInterface', function (folder) {
-        generator.createPHPFile('interface', folder)
-    }))
-    context.subscriptions.push(vscode.commands.registerCommand('phpcompanion.newPHPTrait', function (folder) {
-        generator.createPHPFile('trait', folder)
-    }))
+    context.subscriptions.push(vscode.commands.registerCommand(
+        'phpcompanion.newPHPClass',
+        (folder) => generator.createPHPFile('class', folder)
+    ))
+
+    tests.initStatus(context.subscriptions)
+
+    context.subscriptions.push(vscode.commands.registerCommand(
+        'phpcompanion.launchTests',
+        () => tests.launchTests()
+    ))
 }
 
 function deactivate() { }
