@@ -9,7 +9,7 @@ class Process
     scanOutput()
     {
         const resultats = this.#output
-            .split(/[\r\n]+/g)
+            .split('\n')
             .map(
                 value => value.match(/Tests: (\d+).*, Assertions: (\d+).*, Failures: (\d+)/)
                     || value.match(/OK \((\d+) tests, (\d+) assertions\)/)
@@ -48,16 +48,10 @@ class Process
         }
 
         this.#process.stdout.on('data', data => {
-            this.#output += data.toString()
+            this.#output += data.toString().replace('\r\n', '\n').replace('\r', '\n')
         })
         this.#process.on('error', err => callback(1, resolve(err.message)))
         this.#process.on('close', code => callback(code, this.scanOutput()))
-
-        /*
-        this.#process.stderr.on('data', data => {
-            console.error('stderr : ' + data)
-        })
-        */
     }
 
     kill()

@@ -17,10 +17,15 @@ function activate(context) {
 
     context.subscriptions.push(
         vscode.workspace.registerTextDocumentContentProvider(
-            'phpcompanion',
+            tests.documentProvider.scheme,
             tests.documentProvider
         )
     )
+
+    context.subscriptions.push(vscode.languages.registerDocumentLinkProvider(
+        { scheme: tests.documentProvider.scheme },
+        tests.documentProvider
+    ))
 
     context.subscriptions.push(vscode.commands.registerCommand(
         'phpcompanion.launchTests',

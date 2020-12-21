@@ -6,10 +6,33 @@ let process
 let lastPath
 
 const documentProvider = new class {
-    provideTextDocumentContent(uri) {
+    scheme = 'phpcompanion'
+
+    provideTextDocumentContent(uri)
+    {
         if (uri.path === 'Tests') {
             return '\n' + process.getRawOutput();
         }
+    }
+
+    provideDocumentLinks(document, token)
+    {
+        let links = []
+
+        const content = document.getText().split('\n')
+        for (let lineNumber = 0; lineNumber < content.length; lineNumber++) {
+            const currentLine = content[lineNumber];
+
+            const matches = currentLine.match(/(\/[^:\s]+)(:(\d+))?/)
+            if (matches) {
+                const position = currentLine.indexOf(matches[0])
+                const linkRange = new vscode.Range(lineNumber, position, lineNumber, position + matches[0].length)
+                const linkTarget = vscode.Uri.parse('file://' + matches[1] + (matches[3] ? '#L' + matches[3] : ''))
+                links.push(new vscode.DocumentLink(linkRange, linkTarget))
+            }
+        }
+
+        return links
     }
 }
 
@@ -36,7 +59,7 @@ function launchTests()
     const activeDocumentUri = vscode.window.activeTextEditor.document.uri
 
     let path = lastPath
-    if (activeDocumentUri.scheme !== 'phpcompanion') {
+    if (activeDocumentUri.scheme !== documentProvider.scheme) {
         path = vscode.workspace.getWorkspaceFolder(activeDocumentUri).uri.fsPath
     }
 
