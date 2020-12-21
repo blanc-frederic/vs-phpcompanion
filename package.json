@@ -1,7 +1,7 @@
 {
 	"name": "vs-phpcompanion",
 	"displayName": "PHP Companion",
-	"version": "1.1.1",
+	"version": "1.2.0",
 	"description": "Generate code for new classes, insert namespace, ...",
 	"icon": "resources/icon.png",
 	"author": "Fred Blanc <findel@free.fr>",
@@ -10,6 +10,7 @@
 		"vscode": "^1.34.0"
 	},
 	"activationEvents": [
+		"onLanguage:php",
 		"onCommand:phpcompanion.insertNamespace",
 		"onCommand:phpcompanion.newPHPClass",
 		"onCommand:phpcompanion.launchTests"
@@ -21,7 +22,7 @@
 				"title": "Launch tests",
 				"command": "phpcompanion.launchTests",
 				"category": "PHP Companion",
-				"when": "phpcompanionTestsStatus"
+				"when": "resourceLangId == php || resourceScheme == phpcompanion"
 			},
 			{
 				"command": "phpcompanion.insertNamespace",
@@ -52,6 +53,13 @@
 					"command": "phpcompanion.insertNamespace",
 					"when": "resourceLangId == php"
 				}
+			],
+			"editor/title": [
+				{
+					"command": "phpcompanion.launchTests",
+					"group": "navigation",
+					"when": "resourceScheme == phpcompanion"
+				}
 			]
 		},
 		"configuration": {
@@ -78,7 +86,8 @@
 		"keybindings": [
 			{
 				"command": "phpcompanion.launchTests",
-				"key": "F9"
+				"key": "F9",
+				"when": "!inDebugMode"
 			}
 		]
 	},

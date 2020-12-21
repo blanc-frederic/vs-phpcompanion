@@ -13,11 +13,23 @@ function activate(context) {
         (folder) => generator.createPHPFile('class', folder)
     ))
 
-    tests.initStatus(context.subscriptions)
+    context.subscriptions.push(tests.createStatusBar())
+
+    context.subscriptions.push(
+        vscode.workspace.registerTextDocumentContentProvider(
+            'phpcompanion',
+            tests.documentProvider
+        )
+    )
 
     context.subscriptions.push(vscode.commands.registerCommand(
         'phpcompanion.launchTests',
         () => tests.launchTests()
+    ))
+
+    context.subscriptions.push(vscode.commands.registerCommand(
+        'phpcompanion.showLogs',
+        () => tests.showLogs()
     ))
 }
 
