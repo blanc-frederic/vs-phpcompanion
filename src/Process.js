@@ -12,7 +12,7 @@ class Process
             .split('\n')
             .map(
                 value => value.match(/Tests: (\d+).*, Assertions: (\d+).*, Failures: (\d+)/)
-                    || value.match(/OK \((\d+) tests, (\d+) assertions\)/)
+                    || value.match(/OK \((\d+) tests.*, (\d+) assertions\)/)
             )
             .filter(value => value !== null)
             .pop()
@@ -35,10 +35,6 @@ class Process
 
     run(cwd, callback)
     {
-        if (this.#process) {
-            return
-        }
-
         this.#output = ''
 
         this.#process = child_process.spawn(

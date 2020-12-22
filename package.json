@@ -17,22 +17,15 @@
 		"onLanguage:php",
 		"onCommand:phpcompanion.insertNamespace",
 		"onCommand:phpcompanion.newPHPClass",
-		"onCommand:phpcompanion.launchTests"
+		"onCommand:phpcompanion.runTests"
 	],
 	"main": "./extension",
 	"contributes": {
 		"commands": [
 			{
-				"title": "Launch tests",
-				"command": "phpcompanion.launchTests",
-				"category": "PHP Companion",
-				"when": "resourceLangId == php || resourceScheme == phpcompanion"
-			},
-			{
-				"title": "Open tests logs",
-				"command": "phpcompanion.openLogs",
-				"category": "PHP Companion",
-				"when": "resourceLangId == php"
+				"command": "phpcompanion.newPHPClass",
+				"category": "File",
+				"title": "New PHP Class"
 			},
 			{
 				"command": "phpcompanion.insertNamespace",
@@ -41,23 +34,30 @@
 				"when": "resourceLangId == php"
 			},
 			{
-				"command": "phpcompanion.newPHPClass",
-				"category": "File",
-				"title": "New PHP Class"
+				"title": "Launch tests",
+				"command": "phpcompanion.runTests",
+				"category": "PHP Companion",
+				"when": "resourceLangId == php || resourceScheme == phpcompanion"
+			},
+			{
+				"title": "Open tests logs",
+				"command": "phpcompanion.openLogs",
+				"category": "PHP Companion",
+				"when": "resourceLangId == php"
 			}
 		],
 		"menus": {
-			"commandPalette": [
-				{
-					"command": "phpcompanion.insertNamespace",
-					"when": "resourceLangId == php"
-				}
-			],
 			"explorer/context": [
 				{
 					"command": "phpcompanion.newPHPClass",
 					"when": "explorerResourceIsFolder",
 					"group": "navigation@7"
+				}
+			],
+			"commandPalette": [
+				{
+					"command": "phpcompanion.insertNamespace",
+					"when": "resourceLangId == php"
 				}
 			],
 			"editor/context": [
@@ -68,7 +68,7 @@
 			],
 			"editor/title": [
 				{
-					"command": "phpcompanion.launchTests",
+					"command": "phpcompanion.runTests",
 					"group": "navigation",
 					"when": "resourceScheme == phpcompanion"
 				}
@@ -92,12 +92,30 @@
 					"type": "boolean",
 					"default": true,
 					"description": "Extends PHPUnit TestCase for generated classes with \"Test\" suffix"
+				},
+				"phpcompanion.testsStatus": {
+					"type": "boolean",
+					"default": true,
+					"description": "Show tests status in statusbar"
+				},
+				"phpcompanion.testsCommand": {
+					"type": "string",
+					"default": "vendor/bin/phpunit",
+					"description": "Command line to run tests (ex: \"vendor/bin/phpunit\", \"bin/phpunit\" or \"phpunit\")"
+				},
+				"phpcompanion.testsCommandArguments": {
+					"type": "array",
+					"default": [
+						"--colors=never",
+						"--verbose"
+					],
+					"description": "Arguments for tests command line"
 				}
 			}
 		},
 		"keybindings": [
 			{
-				"command": "phpcompanion.launchTests",
+				"command": "phpcompanion.runTests",
 				"key": "F9",
 				"when": "!inDebugMode"
 			}

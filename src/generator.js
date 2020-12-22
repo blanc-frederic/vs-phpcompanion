@@ -14,17 +14,17 @@ function replaceSelectionWithNamespace() {
     })
 }
 
-function createPHPFile(category, folder) {
+function createPHPFile(folder) {
     if (!folder || !folder.fsPath) {
         interact.askFolder().then(folder => {
             if (folder !== undefined) {
-                createPHPFile(category, vscode.Uri.parse(folder))
+                createPHPFile(vscode.Uri.parse(folder))
             }
         })
         return
     }
 
-    interact.ask(category + ' name').then((name) => {
+    interact.ask('class name').then((name) => {
         if (name === undefined || name.length < 1) {
             return
         }
@@ -32,7 +32,7 @@ function createPHPFile(category, folder) {
         const filename = folder.fsPath + '/' + name + '.php'
 
         createNewFile(filename, generate(
-            category,
+            'class',
             name,
             namespace.getNamespaceFromPath(filename)
         ))
