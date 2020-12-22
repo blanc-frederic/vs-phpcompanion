@@ -17,8 +17,8 @@ class Process
             .filter(value => value !== null)
             .pop()
 
-        if (resultats.lenght < 3) {
-            return { 'tests': 0, 'assertions': 0 }
+        if (!resultats || resultats.length < 3) {
+            throw 'cannot read command results'
         }
 
         return {
@@ -35,6 +35,10 @@ class Process
 
     run(cwd, callback)
     {
+        if (this.#process) {
+            return
+        }
+
         this.#output = ''
 
         this.#process = child_process.spawn(
@@ -50,8 +54,21 @@ class Process
         this.#process.stdout.on('data', data => {
             this.#output += data.toString().replace('\r\n', '\n').replace('\r', '\n')
         })
+        this.#process.stderr.on('data', data => {
+            this.#output += data.toString().replace('\r\n', '\n').replace('\r', '\n')
+        })
         this.#process.on('error', err => callback(1, resolve(err.message)))
-        this.#process.on('close', code => callback(code, this.scanOutput()))
+        this.#process.on('close', code => {
+            let resultats = { 'tests': 0, 'assertions': 0 }
+            try {
+                resultats = this.scanOutput()
+            } catch (exception) {
+                if (code > 0) {
+                    resultats = exception
+                }
+            }
+            callback(code, resultats)
+        })
     }
 
     kill()

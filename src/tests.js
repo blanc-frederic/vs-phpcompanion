@@ -6,11 +6,20 @@ let process
 let lastPath
 
 const documentProvider = new class {
+    onDidChangeEmitter = new vscode.EventEmitter()
+
     scheme = 'phpcompanion'
+    testPath = 'Tests'
+
+    onDidChange = this.onDidChangeEmitter.event
 
     provideTextDocumentContent(uri)
     {
-        if (uri.path === 'Tests') {
+        if (uri.path === this.testPath) {
+            if (! process) {
+                return ''
+            }
+
             return '\n' + process.getRawOutput();
         }
     }
@@ -21,15 +30,20 @@ const documentProvider = new class {
 
         const content = document.getText().split('\n')
         for (let lineNumber = 0; lineNumber < content.length; lineNumber++) {
-            const currentLine = content[lineNumber];
+            const currentLine = content[lineNumber]
 
-            const matches = currentLine.match(/(\/[^:\s]+)(:(\d+))?/)
-            if (matches) {
-                const position = currentLine.indexOf(matches[0])
-                const linkRange = new vscode.Range(lineNumber, position, lineNumber, position + matches[0].length)
-                const linkTarget = vscode.Uri.parse('file://' + matches[1] + (matches[3] ? '#L' + matches[3] : ''))
+            Array.from(
+                currentLine.matchAll(/(?<url>\.{0,2}\/[^(:`\s]+)([(:](?<line>\d+)\)?)?/g)
+            ).forEach(element => {
+                const linkText = element[0]
+                const position = currentLine.indexOf(linkText)
+                const uriAdjust = element.groups.line ? { fragment: (element.groups.line -1) } : {}
+
+                const linkRange = new vscode.Range(lineNumber, position, lineNumber, position + linkText.length)
+                const linkTarget = vscode.Uri.file(element.groups.url).with(uriAdjust)
+
                 links.push(new vscode.DocumentLink(linkRange, linkTarget))
-            }
+            });
         }
 
         return links
@@ -46,10 +60,10 @@ function createStatusBar()
     return testsStatusBar
 }
 
-async function showLogs()
+async function openLogs()
 {
     await vscode.window.showTextDocument(
-        vscode.Uri.parse('phpcompanion:Tests'),
+        vscode.Uri.parse(documentProvider.scheme + ':' + documentProvider.testPath),
         { preview: false }
     )
 }
@@ -65,9 +79,15 @@ function launchTests()
 
     process = new child.Process()
     process.run(path, (code, output) => {
+        const uri = vscode.Uri.parse(documentProvider.scheme + ':' + documentProvider.testPath)
+
+        documentProvider.onDidChangeEmitter.fire(
+            vscode.Uri.parse(documentProvider.scheme + ':' + documentProvider.testPath)
+        )
+
         if (code > 0 && typeof output === 'string') {
-            updateTestsStatusBar()
-            showError(output)
+            updateTestsStatusBar('Error (see logs)')
+            showResultBox('Tests error (see logs)')
             return
         }
 
@@ -84,39 +104,52 @@ function updateTestsStatusBar(output)
     testsStatusBar.command = 'phpcompanion.launchTests'
 
     if (! output) {
-        testsStatusBar.text = `$(beaker) Launch tests (keybindings:phpcompanion.launchTests)`
+        testsStatusBar.text = `$(beaker) Launch tests`
+        return
+    }
+
+    if (typeof output === 'string') {
+        testsStatusBar.text = `$(beaker) $(error) Error`
+        testsStatusBar.command = 'phpcompanion.openLogs'
         return
     }
 
     if (output.failures > 0) {
         testsStatusBar.text = `$(beaker) ${output.assertions} $(error) ${output.failures}`
-        testsStatusBar.command = 'phpcompanion.showLogs'
+        testsStatusBar.command = 'phpcompanion.openLogs'
         return
     }
 
     testsStatusBar.text = `$(beaker) ${output.assertions} $(pass)`
 }
 
-function showError(message)
+async function showResultBox(output)
 {
-    vscode.window.showErrorMessage(message)
-}
+    let action = ''
 
-function showResultBox(output)
-{
-    if (output.failures > 0) {
-        vscode.window.showErrorMessage(
-            `Tests : FAILURES! ${output.tests} tests, ${output.assertions} assertions, ${output.failures} failures`
+    if (output === 'string') {
+        action = await vscode.window.showErrorMessage(
+            output,
+            'Open logs', 'Close'
         )
-        return
+    } else if (output.failures > 0) {
+        action = await vscode.window.showErrorMessage(
+            `Tests : FAILURES! ${output.tests} tests, ${output.assertions} assertions, ${output.failures} failures`,
+            'Open logs', 'Close'
+        )
+    } else {
+        action = await vscode.window.showInformationMessage(
+            `Tests : OK (${output.tests} tests, ${output.assertions} assertions)`,
+            'Open logs', 'Close'
+        )
     }
 
-    vscode.window.showInformationMessage(
-        `Tests : OK (${output.tests} tests, ${output.assertions} assertions)`
-    )
+    if (action === 'Open logs') {
+        vscode.commands.executeCommand('phpcompanion.openLogs')
+    }
 }
 
 exports.launchTests = launchTests
 exports.createStatusBar = createStatusBar
-exports.showLogs = showLogs
+exports.openLogs = openLogs
 exports.documentProvider = documentProvider

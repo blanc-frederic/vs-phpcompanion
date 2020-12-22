@@ -1,13 +1,17 @@
 {
 	"name": "vs-phpcompanion",
-	"displayName": "PHP Companion",
 	"version": "1.2.0",
+	"displayName": "PHP Companion",
 	"description": "Generate code for new classes, insert namespace, ...",
 	"icon": "resources/icon.png",
 	"author": "Fred Blanc <findel@free.fr>",
 	"publisher": "blanc-frederic",
 	"engines": {
 		"vscode": "^1.34.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/blanc-frederic/vs-phpcompanion.git"
 	},
 	"activationEvents": [
 		"onLanguage:php",
@@ -25,12 +29,20 @@
 				"when": "resourceLangId == php || resourceScheme == phpcompanion"
 			},
 			{
+				"title": "Open tests logs",
+				"command": "phpcompanion.openLogs",
+				"category": "PHP Companion",
+				"when": "resourceLangId == php"
+			},
+			{
 				"command": "phpcompanion.insertNamespace",
 				"title": "Insert Namespace",
+				"category": "PHP Companion",
 				"when": "resourceLangId == php"
 			},
 			{
 				"command": "phpcompanion.newPHPClass",
+				"category": "File",
 				"title": "New PHP Class"
 			}
 		],
@@ -90,9 +102,5 @@
 				"when": "!inDebugMode"
 			}
 		]
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/blanc-frederic/vs-phpcompanion.git"
 	}
 }
