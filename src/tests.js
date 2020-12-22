@@ -79,8 +79,6 @@ function launchTests()
 
     process = new child.Process()
     process.run(path, (code, output) => {
-        const uri = vscode.Uri.parse(documentProvider.scheme + ':' + documentProvider.testPath)
-
         documentProvider.onDidChangeEmitter.fire(
             vscode.Uri.parse(documentProvider.scheme + ':' + documentProvider.testPath)
         )
