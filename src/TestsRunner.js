@@ -21,7 +21,7 @@ class TestsRunner {
 
         this.#statusBar.update('running')
 
-        this.#process.run(path, (code, results) => this.handle(code, results))
+        this.#process.run(path, (code, results) => this.handle(path, code, results))
     }
 
     detectPath() {
@@ -45,7 +45,7 @@ class TestsRunner {
         return ''
     }
 
-    async handle(code, results) {
+    async handle(path, code, results) {
         this.#provider.onDidChangeEmitter.fire(Uri.parse('phpcompanion:Tests'))
 
         if (code > 0 && typeof results === 'string') {

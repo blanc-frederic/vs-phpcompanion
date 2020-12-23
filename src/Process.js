@@ -1,18 +1,21 @@
 const child_process = require('child_process')
 const { resolve } = require('path')
+const { getConfig } = require('./config')
 
-class Process
-{
+class Process {
     #process
     #output = ''
 
-    scanOutput()
-    {
+    storeOutput(stream) {
+        this.#output += stream.toString().replace('\r\n', '\n').replace('\r', '\n')
+    }
+
+    scanOutput() {
         const resultats = this.#output
             .split('\n')
             .map(
                 value => value.match(/Tests: (\d+).*, Assertions: (\d+).*, Failures: (\d+)/)
-                    || value.match(/OK \((\d+) tests.*, (\d+) assertions\)/)
+                    || value.match(/OK \((\d+) tests, (\d+) assertions\)/)
             )
             .filter(value => value !== null)
             .pop()
@@ -28,32 +31,30 @@ class Process
         }
     }
 
-    getRawOutput()
-    {
+    get output() {
         return this.#output
     }
 
-    run(cwd, callback)
-    {
+    run(cwd, callback) {
         this.#output = ''
 
-        this.#process = child_process.spawn(
-            'bin/phpunit',
-            ['--verbose', '--colors=never'],
-            { 'cwd': cwd }
-        )
-
-        if (! this.#process) {
+        const command = getConfig('testsCommand', '')
+        if (command == '') {
             return
         }
 
-        this.#process.stdout.on('data', data => {
-            this.#output += data.toString().replace('\r\n', '\n').replace('\r', '\n')
-        })
-        this.#process.stderr.on('data', data => {
-            this.#output += data.toString().replace('\r\n', '\n').replace('\r', '\n')
-        })
+        const args = getConfig('testsCommandArguments', [])
+        this.#process = child_process.spawn(command, args, { 'cwd': cwd })
+
+        if (!this.#process) {
+            return
+        }
+
+        this.#process.stdout.on('data', data => { this.storeOutput(data) })
+        this.#process.stderr.on('data', data => { this.storeOutput(data) })
+
         this.#process.on('error', err => callback(1, resolve(err.message)))
+
         this.#process.on('close', code => {
             let resultats = { 'tests': 0, 'assertions': 0 }
             try {
@@ -67,15 +68,14 @@ class Process
         })
     }
 
-    kill()
-    {
-        if (! this.#process) {
+    kill() {
+        if (!this.#process) {
             return false
         }
 
         this.#process.kill()
 
-        if (! this.#process.killed) {
+        if (!this.#process.killed) {
             return false
         }
 

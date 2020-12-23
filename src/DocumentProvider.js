@@ -17,7 +17,7 @@ class DocumentProvider {
                 return ''
             }
 
-            return '\n' + this.#process.getRawOutput();
+            return '\n' + this.#process.output;
         }
     }
 

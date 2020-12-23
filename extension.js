@@ -1,34 +1,43 @@
 const { commands, languages, Uri, window, workspace } = require('vscode')
 const { createPHPFile, replaceSelectionWithNamespace } = require('./src/generator')
-
+const { getConfig } = require('./src/config')
 const { TestsRunner } = require('./src/TestsRunner')
 const { TestsStatusBar } = require('./src/TestsStatusBar')
 const { Process } = require('./src/Process')
 const { DocumentProvider } = require('./src/DocumentProvider')
 
 function activate(context) {
-    const statusBar = new TestsStatusBar()
-    const process = new Process()
-    const provider = new DocumentProvider(process)
-    const runner = new TestsRunner(statusBar, process, provider)
+    if (getConfig('activate.createPHPFile', true)) {
+        context.subscriptions.push(
+            commands.registerCommand('phpcompanion.newPHPClass', (folder) => createPHPFile(folder))
+        )
+    }
 
-    context.subscriptions.push(
-        commands.registerCommand('phpcompanion.newPHPClass', (folder) => createPHPFile(folder)),
-        commands.registerCommand('phpcompanion.insertNamespace', replaceSelectionWithNamespace),
-        commands.registerCommand('phpcompanion.runTests', () => runner.run()),
-        commands.registerCommand('phpcompanion.openLogs', openLogs),
+    if (getConfig('activate.insertNamespace', true)) {
+        context.subscriptions.push(
+            commands.registerCommand('phpcompanion.insertNamespace', replaceSelectionWithNamespace),
+        )
+    }
 
-        statusBar,
+    if (getConfig('activate.runTests', true)) {
+        const statusBar = new TestsStatusBar()
+        const process = new Process()
+        const provider = new DocumentProvider(process)
+        const runner = new TestsRunner(statusBar, process, provider)
 
-        workspace.registerTextDocumentContentProvider('phpcompanion', provider),
-        languages.registerDocumentLinkProvider({ scheme: 'phpcompanion' }, provider)
-    )
+        context.subscriptions.push(
+            commands.registerCommand('phpcompanion.runTests', () => runner.run()),
+            commands.registerCommand('phpcompanion.openLogs', openLogs),
+            statusBar,
+            workspace.registerTextDocumentContentProvider('phpcompanion', provider),
+            languages.registerDocumentLinkProvider({ scheme: 'phpcompanion' }, provider)
+        )
+    }
 }
 
 function deactivate() { }
 
-async function openLogs()
-{
+async function openLogs() {
     await window.showTextDocument(Uri.parse('phpcompanion:Tests'), { preview: false })
 }
 
