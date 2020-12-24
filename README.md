@@ -1,27 +1,17 @@
 PHP Companion
 =============
 
-This extension generate code (php >=7.4) for classes, interfaces and traits
+This extension allows to easily create new PHP classes, launch tests, add namespace, etc.
 
-Editor context menu
--------------------
-
-Only for PHP files : select text, or position cursor, and choose "Insert namespace" to generate and insert namespace for current file
-
-Explorer context menu
----------------------
-
-Select "new PHP Class" directly from explorer context menu. You will be prompted for the name
-
-Commands
+Features
 --------
 
-Corresponding commands exists to create new file, you will be prompted for parent folder, then item name : `new PHP Class`
-
-Commands also exists for inserting namespace **in current editor** only in PHP file: `Insert namespace`
+* 
 
 Configuration
 -------------
+
+Tip : use `File > Preferences > Settings`, and choose `Workspace` to specify a value decicated for current workspace only
 
 ```json
 // Path to composer.json from workspace rootdir
@@ -33,8 +23,6 @@ Configuration
 // Auto extends PHPUnit TestCase for generated classes with "Test" suffix
 "phpcompanion.detectTestCase": true,
 ```
-
-> Tip : use `File > Preferences > Settings`, and choose `Workspace` to specify a value decicated for current workspace only
 
 FAQ
 ---

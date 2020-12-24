@@ -1,8 +1,10 @@
 {
 	"name": "vs-phpcompanion",
-	"version": "1.2.0",
+	"version": "2.0.0",
 	"displayName": "PHP Companion",
-	"description": "Generate code for new classes, insert namespace, ...",
+	"description": "Create new PHP files, run tests, insert namespace, ...",
+	"categories": ["Programming Languages"],
+	"keywords": ["php", "class", "namespace", "test", "tdd", "phpunit"],
 	"icon": "resources/icon.png",
 	"author": "Fred Blanc <findel@free.fr>",
 	"publisher": "blanc-frederic",
@@ -44,6 +46,13 @@
 				"command": "phpcompanion.openLogs",
 				"category": "PHP Companion",
 				"when": "resourceLangId == php"
+			}
+		],
+		"keybindings": [
+			{
+				"command": "phpcompanion.runTests",
+				"key": "F9",
+				"when": "!inDebugMode"
 			}
 		],
 		"menus": {
@@ -112,13 +121,6 @@
 					"description": "Arguments for tests command line"
 				}
 			}
-		},
-		"keybindings": [
-			{
-				"command": "phpcompanion.runTests",
-				"key": "F9",
-				"when": "!inDebugMode"
-			}
-		]
+		}
 	}
 }
