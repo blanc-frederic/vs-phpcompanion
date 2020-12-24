@@ -10,7 +10,24 @@ Features
 * Read Namespace from composer.json
 * Insert namespace for a file
 * Add extends PHPUnit TestCase to classes wich names ends by "Test"
-* 
+* Add command and Keybindings to easily run tests
+* Open tests logs in a virtual document
+
+Create new PHP files
+--------------------
+
+From explorer, right click on a folder and select "New PHP Class"
+
+... done ! See FAQ to read more about generated namespace
+
+Easily run tests
+----------------
+
+Type your code and hit F9 (default keybindings).
+
+
+Tests will be executed, and results will show in statusbar
+
 
 Configuration
 -------------
@@ -18,6 +35,12 @@ Configuration
 Tip : use `File > Preferences > Settings`, and choose `Workspace` to specify a value decicated for current workspace only
 
 ```json
+// Add "New PHP class" command and menu in explorer menu
+"phpcompanion.activate.createPHPFile": true,
+
+// Add "Insert namespace" command and menu for PHP files
+"phpcompanion.activate.insertNamespace": true,
+
 // Path to composer.json from workspace rootdir
 "phpcompanion.composerJson": "composer.json",
 
@@ -27,29 +50,17 @@ Tip : use `File > Preferences > Settings`, and choose `Workspace` to specify a v
 // Auto extends PHPUnit TestCase for generated classes with "Test" suffix
 "phpcompanion.detectTestCase": true,
 
-// Show tests status in statusbar
-"phpcompanion.testsStatus": true,
+// Add "Run tests" commands and statusbar
+"phpcompanion.activate.runTests": true,
 
+// Command line to run tests (ex: "vendor/bin/phpunit", "bin/phpunit" or "phpunit")
+"phpcompanion.testsCommand": "vendor/bin/phpunit",
 
-
-				 {
-					"type": "boolean",
-					"default": true,
-					"description": "Show tests status in statusbar"
-				},
-				"phpcompanion.testsCommand": {
-					"type": "string",
-					"default": "vendor/bin/phpunit",
-					"description": "Command line to run tests (ex: \"vendor/bin/phpunit\", \"bin/phpunit\" or \"phpunit\")"
-				},
-				"phpcompanion.testsCommandArguments": {
-					"type": "array",
-					"default": [
-						"--colors=never",
-						"--verbose"
-					],
-					"description": "Arguments for tests command line"
-				}
+// Arguments for tests command line
+"phpcompanion.testsCommandArguments": [
+    "--colors=never",
+    "--verbose"
+]
 ```
 
 FAQ

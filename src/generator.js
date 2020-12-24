@@ -1,15 +1,15 @@
-const vscode = require('vscode')
-const config = require('./config')
-const namespace = require('./namespace')
+const { Uri, window, workspace} = require('vscode')
+const { getConfig } = require('./config')
+const { getNamespaceFromPath } = require('./namespace')
 const interact = require('./interact')
 
 function replaceSelectionWithNamespace() {
-    const editor = vscode.window.activeTextEditor
+    const editor = window.activeTextEditor
 
     editor.edit(eb => {
         eb.replace(
             editor.selection,
-            'namespace ' + namespace.getNamespaceFromPath(editor.document.fileName) + ';'
+            'namespace ' + getNamespaceFromPath(editor.document.fileName) + ';'
         )
     })
 }
@@ -18,7 +18,7 @@ function createPHPFile(folder) {
     if (!folder || !folder.fsPath) {
         interact.askFolder().then(folder => {
             if (folder !== undefined) {
-                createPHPFile(vscode.Uri.parse(folder))
+                createPHPFile(Uri.parse(folder))
             }
         })
         return
@@ -31,27 +31,26 @@ function createPHPFile(folder) {
 
         const filename = folder.fsPath + '/' + name + '.php'
 
-        createNewFile(filename, generate(
-            'class',
-            name,
-            namespace.getNamespaceFromPath(filename)
-        ))
+        createNewFile(
+            filename,
+            generate('class', name, getNamespaceFromPath(filename))
+        )
     })
 }
 
 function createNewFile(filename, content)
 {
-    const fileUri = vscode.Uri.file(filename)
+    const fileUri = Uri.file(filename)
 
-    vscode.workspace.fs.stat(fileUri).then(() => {
+    workspace.fs.stat(fileUri).then(() => {
         interact.error(
-            'File "' + vscode.workspace.asRelativePath(fileUri) + '" already exists'
+            'File "' + workspace.asRelativePath(fileUri) + '" already exists'
         )
     }, () => {
-        vscode.workspace.fs.writeFile(fileUri, new TextEncoder().encode(content)
+        workspace.fs.writeFile(fileUri, new TextEncoder().encode(content)
         ).then(() => {
-            vscode.workspace.openTextDocument(fileUri).then(
-                document => vscode.window.showTextDocument(document).then(
+            workspace.openTextDocument(fileUri).then(
+                document => window.showTextDocument(document).then(
                     document => interact.moveCursorTo(document.document.lineCount -3, 4)
                 )
             )
@@ -61,7 +60,7 @@ function createNewFile(filename, content)
 
 function generate(category, name, ns) {
     if (
-        config.getConfig('detectTestCase', true)
+        getConfig('class.detectTestCase', true)
         && category === 'class'
         && name !== 'Test'
         && name.endsWith('Test')

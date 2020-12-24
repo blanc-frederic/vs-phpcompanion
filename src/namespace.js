@@ -1,12 +1,12 @@
-const vscode = require('vscode')
+const { Uri, workspace } = require('vscode')
 const path = require('path')
 const fs = require('fs')
-const config = require('./config')
+const { getConfig } = require('./config')
 
 function getNamespaceFromPath(filename) {
     let vendorData = getNamespaceFromComposer(filename)
 
-    let relativeFilename = vscode.workspace.asRelativePath(filename)
+    let relativeFilename = workspace.asRelativePath(filename)
 
     if (vendorData.startsWith.length > 0) {
         relativeFilename = relativeFilename.substr(vendorData.startsWith.length)
@@ -34,19 +34,19 @@ function getNamespaceFromPath(filename) {
 
 function getComposerFileFor(filename)
 {
-    const configComposer = config.getConfig('composerJson')
+    const configComposer = getConfig('class.composerJson')
     if (configComposer.length < 1) {
         return null
     }
 
-    const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(filename)).uri.fsPath
+    const workspaceFolder = workspace.getWorkspaceFolder(Uri.file(filename)).uri.fsPath
     return workspaceFolder + path.sep + configComposer
 }
 
 function getNamespaceFromComposer(filename)
 {
     let defaultVendor = {
-        'namespace': config.getConfig('vendor'),
+        'namespace': getConfig('class.vendor'),
         'startsWith': ''
     }
 
@@ -55,7 +55,7 @@ function getNamespaceFromComposer(filename)
         return defaultVendor
     }
 
-    const relativeFilename = vscode.workspace.asRelativePath(filename)
+    const relativeFilename = workspace.asRelativePath(filename)
         .replace(path.sep, '/')
 
     const sources = ['autoload', 'autoload-dev']

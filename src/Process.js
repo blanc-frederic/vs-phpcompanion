@@ -4,6 +4,7 @@ const { getConfig } = require('./config')
 
 class Process {
     #process
+    #error = null
     #output = ''
 
     storeOutput(stream) {
@@ -37,25 +38,39 @@ class Process {
 
     run(cwd, callback) {
         this.#output = ''
+        this.#error = null
 
-        const command = getConfig('testsCommand', '')
+        const command = getConfig('tests.script', '')
         if (command == '') {
+            this.#output = 'No tests script. Please set in settings'
             return
         }
 
-        const args = getConfig('testsCommandArguments', [])
+        this.#output = '> ' + command + ' '
+
+        const args = getConfig('tests.scriptArguments', [])
+        this.#output += args.join(' ') + '\n\n'
+
         this.#process = child_process.spawn(command, args, { 'cwd': cwd })
 
         if (!this.#process) {
+            this.#output = 'Cannot start process for tests script'
             return
         }
 
         this.#process.stdout.on('data', data => { this.storeOutput(data) })
         this.#process.stderr.on('data', data => { this.storeOutput(data) })
 
-        this.#process.on('error', err => callback(1, resolve(err.message)))
+        this.#process.on('error', err => {
+            this.#error = err
+            callback(1, resolve(err.message))
+        })
 
         this.#process.on('close', code => {
+            if (this.#error) {
+                return
+            }
+
             let resultats = { 'tests': 0, 'assertions': 0 }
             try {
                 resultats = this.scanOutput()

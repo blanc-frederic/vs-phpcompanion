@@ -97,17 +97,17 @@
 					"default": true,
 					"description": "Add \"Insert namespace\" command and menu for PHP files"
 				},
-				"phpcompanion.composerJson": {
+				"phpcompanion.class.composerJson": {
 					"type": "string",
 					"default": "composer.json",
 					"description": "Path to composer.json from workspace rootdir"
 				},
-				"phpcompanion.vendor": {
+				"phpcompanion.class.vendor": {
 					"type": "string",
 					"default": null,
 					"description": "Specifies default vendor if not extracted from composer.json"
 				},
-				"phpcompanion.detectTestCase": {
+				"phpcompanion.class.detectTestCase": {
 					"type": "boolean",
 					"default": true,
 					"description": "Extends PHPUnit TestCase for generated classes with \"Test\" suffix"
@@ -117,12 +117,12 @@
 					"default": true,
 					"description": "Add \"Run tests\" commands and statusbar"
 				},
-				"phpcompanion.testsCommand": {
+				"phpcompanion.tests.script": {
 					"type": "string",
 					"default": "vendor/bin/phpunit",
 					"description": "Command line to run tests (ex: \"vendor/bin/phpunit\", \"bin/phpunit\" or \"phpunit\")"
 				},
-				"phpcompanion.testsCommandArguments": {
+				"phpcompanion.tests.scriptArguments": {
 					"type": "array",
 					"default": [
 						"--colors=never",
