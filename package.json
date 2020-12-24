@@ -87,6 +87,16 @@
 			"type": "object",
 			"title": "PHP Companion",
 			"properties": {
+				"phpcompanion.activate.createPHPFile": {
+					"type": "boolean",
+					"default": true,
+					"description": "Add \"New PHP class\" command and menu in explorer menu"
+				},
+				"phpcompanion.activate.insertNamespace": {
+					"type": "boolean",
+					"default": true,
+					"description": "Add \"Insert namespace\" command and menu for PHP files"
+				},
 				"phpcompanion.composerJson": {
 					"type": "string",
 					"default": "composer.json",
@@ -102,10 +112,10 @@
 					"default": true,
 					"description": "Extends PHPUnit TestCase for generated classes with \"Test\" suffix"
 				},
-				"phpcompanion.testsStatus": {
+				"phpcompanion.activate.runTests": {
 					"type": "boolean",
 					"default": true,
-					"description": "Show tests status in statusbar"
+					"description": "Add \"Run tests\" commands and statusbar"
 				},
 				"phpcompanion.testsCommand": {
 					"type": "string",

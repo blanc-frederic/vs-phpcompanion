@@ -6,6 +6,10 @@ This extension allows to easily create new PHP classes, launch tests, add namesp
 Features
 --------
 
+* Create PHP class file content
+* Read Namespace from composer.json
+* Insert namespace for a file
+* Add extends PHPUnit TestCase to classes wich names ends by "Test"
 * 
 
 Configuration
@@ -22,6 +26,30 @@ Tip : use `File > Preferences > Settings`, and choose `Workspace` to specify a v
 
 // Auto extends PHPUnit TestCase for generated classes with "Test" suffix
 "phpcompanion.detectTestCase": true,
+
+// Show tests status in statusbar
+"phpcompanion.testsStatus": true,
+
+
+
+				 {
+					"type": "boolean",
+					"default": true,
+					"description": "Show tests status in statusbar"
+				},
+				"phpcompanion.testsCommand": {
+					"type": "string",
+					"default": "vendor/bin/phpunit",
+					"description": "Command line to run tests (ex: \"vendor/bin/phpunit\", \"bin/phpunit\" or \"phpunit\")"
+				},
+				"phpcompanion.testsCommandArguments": {
+					"type": "array",
+					"default": [
+						"--colors=never",
+						"--verbose"
+					],
+					"description": "Arguments for tests command line"
+				}
 ```
 
 FAQ
