@@ -5,6 +5,7 @@ const { TestsRunner } = require('./src/TestsRunner')
 const { TestsStatusBar } = require('./src/TestsStatusBar')
 const { Process } = require('./src/Process')
 const { DocumentProvider } = require('./src/DocumentProvider')
+const { PHPUnitParser } = require('./src/PHPUnitParser')
 
 function activate(context) {
     if (getConfig('activate.createPHPFile', true)) {
@@ -23,7 +24,7 @@ function activate(context) {
         const statusBar = new TestsStatusBar()
         const process = new Process()
         const provider = new DocumentProvider(process)
-        const runner = new TestsRunner(statusBar, process, provider)
+        const runner = new TestsRunner(statusBar, process, new PHPUnitParser(), provider)
 
         context.subscriptions.push(
             commands.registerCommand('phpcompanion.runTests', () => runner.run()),

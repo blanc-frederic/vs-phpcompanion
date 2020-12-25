@@ -10,7 +10,7 @@ class TestsStatusBar {
 
     update(state, data) {
         this.#statusBar.command = 'phpcompanion.runTests'
-        
+
         if (!state) {
             this.#statusBar.text = `$(beaker) Click to run tests`
             return

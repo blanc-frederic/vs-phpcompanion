@@ -32,8 +32,7 @@ function getNamespaceFromPath(filename) {
     return vendorData.namespace + '\\' + namespace
 }
 
-function getComposerFileFor(filename)
-{
+function getComposerFileFor(filename) {
     const configComposer = getConfig('class.composerJson')
     if (configComposer.length < 1) {
         return null
@@ -43,15 +42,14 @@ function getComposerFileFor(filename)
     return workspaceFolder + path.sep + configComposer
 }
 
-function getNamespaceFromComposer(filename)
-{
+function getNamespaceFromComposer(filename) {
     let defaultVendor = {
         'namespace': getConfig('class.vendor'),
         'startsWith': ''
     }
 
     const composer = loadJson(getComposerFileFor(filename))
-    if (! composer) {
+    if (!composer) {
         return defaultVendor
     }
 
@@ -68,10 +66,10 @@ function getNamespaceFromComposer(filename)
 
                 if (relativeFilename.startsWith(folder)) {
                     if (vendor.endsWith('\\')) {
-                        vendor = vendor.substr(0, vendor.length -1)
+                        vendor = vendor.substr(0, vendor.length - 1)
                     }
 
-                    if (! folder.endsWith('/')) {
+                    if (!folder.endsWith('/')) {
                         folder += '/'
                     }
 
@@ -104,7 +102,7 @@ function loadJson(filename) {
     }
 
     const json = JSON.parse(content)
-    if (! json) {
+    if (!json) {
         return null
     }
 

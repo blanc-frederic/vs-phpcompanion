@@ -3,12 +3,14 @@ const { commands, Uri, window, workspace } = require('vscode')
 class TestsRunner {
     #statusBar
     #process
+    #parser
     #provider
     #lastPath = ''
 
-    constructor(statusBar, process, provider) {
+    constructor(statusBar, process, parser, provider) {
         this.#statusBar = statusBar
         this.#process = process
+        this.#parser = parser
         this.#provider = provider
     }
 
@@ -21,7 +23,7 @@ class TestsRunner {
 
         this.#statusBar.update('running')
 
-        this.#process.run(path, (code, results) => this.handle(path, code, results))
+        this.#process.run(path, (code) => this.handle(path, code))
     }
 
     detectPath() {
@@ -45,8 +47,10 @@ class TestsRunner {
         return ''
     }
 
-    async handle(path, code, results) {
+    async handle(path, code) {
         this.#provider.onDidChangeEmitter.fire(Uri.parse('phpcompanion:Tests'))
+
+        const results = this.#parser.scan(this.#process.output)
 
         if (code !== 0 && !results) {
             this.#statusBar.update('error')

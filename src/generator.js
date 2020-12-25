@@ -1,4 +1,4 @@
-const { Uri, window, workspace} = require('vscode')
+const { Uri, window, workspace } = require('vscode')
 const { getConfig } = require('./config')
 const { getNamespaceFromPath } = require('./namespace')
 const interact = require('./interact')
@@ -38,8 +38,7 @@ function createPHPFile(folder) {
     })
 }
 
-function createNewFile(filename, content)
-{
+function createNewFile(filename, content) {
     const fileUri = Uri.file(filename)
 
     workspace.fs.stat(fileUri).then(() => {
@@ -51,7 +50,7 @@ function createNewFile(filename, content)
         ).then(() => {
             workspace.openTextDocument(fileUri).then(
                 document => window.showTextDocument(document).then(
-                    document => interact.moveCursorTo(document.document.lineCount -3, 4)
+                    document => interact.moveCursorTo(document.document.lineCount - 3, 4)
                 )
             )
         })

@@ -1,4 +1,4 @@
-const child_process = require('child_process')
+const { spawn } = require('child_process')
 const { getConfig } = require('./config')
 
 class Process {
@@ -8,27 +8,6 @@ class Process {
 
     storeOutput(stream) {
         this.#output += stream.toString().replace('\r\n', '\n').replace('\r', '\n')
-    }
-
-    scanOutput() {
-        const resultats = this.#output
-            .split('\n')
-            .map(
-                value => value.match(/Tests: (\d+).*, Assertions: (\d+).*, (Failures|Errors): (\d+)/)
-                    || value.match(/OK \((\d+) tests, (\d+) assertions\)/)
-            )
-            .filter(value => value !== null)
-            .pop()
-
-        if (!resultats || resultats.length < 3) {
-            throw 'cannot read command results'
-        }
-
-        return {
-            'tests': resultats[1],
-            'assertions': resultats[2],
-            'failures': resultats[4] ? resultats[4] : 0
-        }
     }
 
     get output() {
@@ -48,10 +27,10 @@ class Process {
         const args = getConfig('tests.scriptArguments', [])
         this.#output = '> ' + command + ' ' + args.join(' ') + '\n\n'
 
-        this.#process = child_process.spawn(command, args, { 'cwd': cwd })
+        this.#process = spawn(command, args, { 'cwd': cwd })
 
         if (!this.#process) {
-            this.#output += 'Cannot start process for tests script'
+            this.#output += 'Cannot start process'
             return
         }
 
@@ -68,14 +47,7 @@ class Process {
             if (this.#error) {
                 return
             }
-
-            let resultats = null
-            try {
-                resultats = this.scanOutput()
-            } catch (exception) {
-            }
-
-            callback(code, resultats)
+            callback(code)
         })
     }
 
