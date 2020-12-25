@@ -29,7 +29,7 @@ class DocumentProvider {
             const currentLine = content[lineNumber]
 
             Array.from(
-                currentLine.matchAll(/(?<url>\.{0,2}\/[^(:`\s]+)([(:](?<line>\d+)\)?)?/g)
+                currentLine.matchAll(/(?<url>[^\s]*\/[^(:`\s]+)([(:](?<line>\d+)\)?)?/g)
             ).forEach(element => {
                 const linkText = element[0]
                 const position = currentLine.indexOf(linkText)

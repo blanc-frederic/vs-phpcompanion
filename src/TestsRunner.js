@@ -48,7 +48,7 @@ class TestsRunner {
     async handle(path, code, results) {
         this.#provider.onDidChangeEmitter.fire(Uri.parse('phpcompanion:Tests'))
 
-        if (code !== 0 && typeof results === 'string') {
+        if (code !== 0 && !results) {
             this.#statusBar.update('error')
             const action = await window.showErrorMessage('Error running tests', 'Open logs', 'Close')
             if (action === 'Open logs') {

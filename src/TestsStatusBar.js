@@ -28,15 +28,17 @@ class TestsStatusBar {
             return
         }
 
+        const results = `${data.tests} tests, ${data.assertions} assertions`
+
         if (data.failures > 0) {
             this.#statusBar.text = `$(beaker) ${data.assertions} $(error) ${data.failures}`
-            this.#statusBar.tooltip = 'Click to show error logs'
+            this.#statusBar.tooltip = `${results}, ${data.failures} failures. Click to show error logs`
             this.#statusBar.command = 'phpcompanion.openLogs'
             return
         }
 
         this.#statusBar.text = `$(beaker) ${data.assertions} $(pass)`
-        this.#statusBar.tooltip = 'Click to run tests again'
+        this.#statusBar.tooltip = `${results}. Click to run tests again`
     }
 }
 

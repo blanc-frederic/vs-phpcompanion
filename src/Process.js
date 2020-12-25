@@ -1,10 +1,9 @@
 const child_process = require('child_process')
-const { resolve } = require('path')
 const { getConfig } = require('./config')
 
 class Process {
     #process
-    #error = null
+    #error = false
     #output = ''
 
     storeOutput(stream) {
@@ -15,7 +14,7 @@ class Process {
         const resultats = this.#output
             .split('\n')
             .map(
-                value => value.match(/Tests: (\d+).*, Assertions: (\d+).*, Failures: (\d+)/)
+                value => value.match(/Tests: (\d+).*, Assertions: (\d+).*, (Failures|Errors): (\d+)/)
                     || value.match(/OK \((\d+) tests, (\d+) assertions\)/)
             )
             .filter(value => value !== null)
@@ -28,7 +27,7 @@ class Process {
         return {
             'tests': resultats[1],
             'assertions': resultats[2],
-            'failures': resultats[3] ? resultats[3] : 0
+            'failures': resultats[4] ? resultats[4] : 0
         }
     }
 
@@ -38,23 +37,21 @@ class Process {
 
     run(cwd, callback) {
         this.#output = ''
-        this.#error = null
+        this.#error = false
 
         const command = getConfig('tests.script', '')
         if (command == '') {
-            this.#output = 'No tests script. Please set in settings'
+            this.#output = 'Error : no tests script. Please set in settings'
             return
         }
 
-        this.#output = '> ' + command + ' '
-
         const args = getConfig('tests.scriptArguments', [])
-        this.#output += args.join(' ') + '\n\n'
+        this.#output = '> ' + command + ' ' + args.join(' ') + '\n\n'
 
         this.#process = child_process.spawn(command, args, { 'cwd': cwd })
 
         if (!this.#process) {
-            this.#output = 'Cannot start process for tests script'
+            this.#output += 'Cannot start process for tests script'
             return
         }
 
@@ -62,8 +59,9 @@ class Process {
         this.#process.stderr.on('data', data => { this.storeOutput(data) })
 
         this.#process.on('error', err => {
-            this.#error = err
-            callback(1, resolve(err.message))
+            this.#error = true
+            this.storeOutput(err.message.replace('ENOENT', ': no such file or directory'))
+            callback(1)
         })
 
         this.#process.on('close', code => {
@@ -71,14 +69,12 @@ class Process {
                 return
             }
 
-            let resultats = { 'tests': 0, 'assertions': 0 }
+            let resultats = null
             try {
                 resultats = this.scanOutput()
             } catch (exception) {
-                if (code > 0) {
-                    resultats = exception
-                }
             }
+
             callback(code, resultats)
         })
     }
@@ -95,6 +91,7 @@ class Process {
         }
 
         this.#output = ''
+        this.#error = null
         this.#process = null
         return true
     }
