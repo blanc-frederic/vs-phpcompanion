@@ -2,7 +2,7 @@
 	"name": "vs-phpcompanion",
 	"version": "2.0.0",
 	"displayName": "PHP Companion",
-	"description": "Create new PHP files, run tests, insert namespace, ...",
+	"description": "Create new PHP class, run tests, insert namespace, ...",
 	"categories": ["Programming Languages"],
 	"keywords": ["php", "class", "namespace", "test", "tdd", "phpunit"],
 	"icon": "resources/icon.png",

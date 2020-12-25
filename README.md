@@ -1,7 +1,7 @@
 PHP Companion
 =============
 
-This extension allows to easily create new PHP classes, launch tests, add namespace, etc.
+This extension allows to easily create new PHP class, run test, insert namespace, etc.
 
 Features
 --------

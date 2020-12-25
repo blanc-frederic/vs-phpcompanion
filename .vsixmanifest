@@ -7,7 +7,7 @@
   <Metadata>
     <Identity Language="en-US" Id="vs-phpcompanion" Version="2.0.0" Publisher="blanc-frederic"/>
     <DisplayName>PHP Companion</DisplayName>
-    <Description xml:space="preserve">Create new PHP files, run tests, insert namespace, ...</Description>
+    <Description xml:space="preserve">Create new PHP class, run tests, insert namespace, ...</Description>
     <Tags>PHP</Tags>
     <Categories>Programming Languages</Categories>
     <GalleryFlags>Public</GalleryFlags>
