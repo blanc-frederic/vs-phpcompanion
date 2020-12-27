@@ -18,31 +18,31 @@ Create new PHP files
 
 From explorer, right click on a folder and select "New PHP Class"
 
-![New PHP Class screenshot](./resources/new_php_class.png)
+![New PHP Class screenshot](https://raw.githubusercontent.com/blanc-frederic/vs-phpcompanion/main/resources/new_php_class.png)
 
-See [FAQ](./FAQ.md) to read more about generated namespace
+See [FAQ](https://github.com/blanc-frederic/vs-phpcompanion/blob/main/FAQ.md) to read more about generated namespace
 
 Insert namespace in PHP files
 -----------------------------
 
 Select text or move cursor to the desired position and right click, then choose "Insert namespace" menu item
 
-![Insert namespace screenshot](./resources/insert_namespace.png)
+![Insert namespace screenshot](https://raw.githubusercontent.com/blanc-frederic/vs-phpcompanion/main/resources/insert_namespace.png)
 
 Easily run tests
 ----------------
 
 Hit F9 (default keybindings) or select the command to run tests
 
-![commands screenshot](./resources/commands.png)
+![commands screenshot](https://raw.githubusercontent.com/blanc-frederic/vs-phpcompanion/main/resources/commands.png)
 
 Tests will be executed, and results will be shown in statusbar
 
-![Status bar screenshot](./resources/status_bar.png)
+![Status bar screenshot](https://raw.githubusercontent.com/blanc-frederic/vs-phpcompanion/main/resources/status_bar.png)
 
 Click "Open tests logs" and see what happened
 
-![Tests logs screenshot](./resources/open_logs.png)
+![Tests logs screenshot](https://raw.githubusercontent.com/blanc-frederic/vs-phpcompanion/main/resources/open_logs.png)
 
 Configuration
 -------------
