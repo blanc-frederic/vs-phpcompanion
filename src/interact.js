@@ -1,17 +1,17 @@
-const vscode = require('vscode')
+const { Position, Selection, window } = require('vscode')
 
 /**
  * @param {string} message
  */
 function error(message) {
-    vscode.window.showErrorMessage(message)
+    window.showErrorMessage(message)
 }
 
 /**
  * @return {Thenable}
  */
 function askFolder() {
-    return vscode.window.showOpenDialog({
+    return window.showOpenDialog({
         canSelectFiles: false,
         canSelectFolders: true
     })
@@ -22,7 +22,7 @@ function askFolder() {
  * @return {Thenable}
  */
 function ask(subject) {
-    return vscode.window.showInputBox({
+    return window.showInputBox({
         prompt: subject
     })
 }
@@ -32,10 +32,10 @@ function ask(subject) {
  * @param {int} character
  */
 function moveCursorTo(line, character = 0) {
-    const pos = new vscode.Position(line, character)
+    const pos = new Position(line, character)
 
-    vscode.window.activeTextEditor.selections = [
-        new vscode.Selection(pos, pos)
+    window.activeTextEditor.selections = [
+        new Selection(pos, pos)
     ]
 }
 

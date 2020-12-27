@@ -1,29 +1,61 @@
 PHP Companion
 =============
 
-This extension generate code (php >=7.4) for classes, interfaces and traits
+This extension allows to easily create new PHP class, run test, insert namespace, etc.
 
-Editor context menu
--------------------
-
-Only for PHP files : select text, or position cursor, and choose "Insert namespace" to generate and insert namespace for current file
-
-Explorer context menu
----------------------
-
-Select "new PHP Class" directly from explorer context menu. You will be prompted for the name
-
-Commands
+Features
 --------
 
-Corresponding commands exists to create new file, you will be prompted for parent folder, then item name : `new PHP Class`
+* Create PHP class file content
+* Read Namespace from composer.json
+* Insert namespace for a file
+* Add extends PHPUnit TestCase to classes wich names ends by "Test"
+* Add command and Keybindings to easily run tests
+* Open tests logs in a virtual document
 
-Commands also exists for inserting namespace **in current editor** only in PHP file: `Insert namespace`
+Create new PHP files
+--------------------
+
+From explorer, right click on a folder and select "New PHP Class"
+
+![New PHP Class screenshot](./resources/new_php_class.png)
+
+See [FAQ](./FAQ.md) to read more about generated namespace
+
+Insert namespace in PHP files
+-----------------------------
+
+Select text or move cursor to the desired position and right click, then choose "Insert namespace" menu item
+
+![Insert namespace screenshot](./resources/insert_namespace.png)
+
+Easily run tests
+----------------
+
+Hit F9 (default keybindings) or select the command to run tests
+
+![commands screenshot](./resources/commands.png)
+
+Tests will be executed, and results will be shown in statusbar
+
+![Status bar screenshot](./resources/status_bar.png)
+
+Click "Open tests logs" and see what happened
+
+![Tests logs screenshot](./resources/open_logs.png)
 
 Configuration
 -------------
 
+Tip : use `File > Preferences > Settings`, and choose `Workspace` to specify a value decicated for current workspace only
+
 ```json
+// Add "New PHP class" command and menu in explorer menu
+"phpcompanion.activate.createPHPFile": true,
+
+// Add "Insert namespace" command and menu for PHP files
+"phpcompanion.activate.insertNamespace": true,
+
 // Path to composer.json from workspace rootdir
 "phpcompanion.composerJson": "composer.json",
 
@@ -32,27 +64,16 @@ Configuration
 
 // Auto extends PHPUnit TestCase for generated classes with "Test" suffix
 "phpcompanion.detectTestCase": true,
+
+// Add "Run tests" commands and statusbar
+"phpcompanion.activate.runTests": true,
+
+// Command line to run tests (ex: "vendor/bin/phpunit", "bin/phpunit" or "phpunit")
+"phpcompanion.testsCommand": "vendor/bin/phpunit",
+
+// Arguments for tests command line
+"phpcompanion.testsCommandArguments": [
+    "--colors=never",
+    "--verbose"
+]
 ```
-
-> Tip : use `File > Preferences > Settings`, and choose `Workspace` to specify a value decicated for current workspace only
-
-FAQ
----
-
-> How does it detects namespace ?
-
-First, it search for a vendor prefix (stop as soon as one matches) :
-
-1. compare relative filename (from workspace) with composer entries from `autoload/psr-4`
-2. compare relative filename (from workspace) with composer entries from `autoload-dev/psr-4`
-3. phpcompanion.vendor (if set)
-
-Then, append relative path (from workspace root folder) :
-
-- if vendor prefix was extracted from composer, exclude corresponding path prefix from composer
-- else if path starts with `src/` or `tests/`, exclude this prefix from path
-- else if `phpcompanion.vendor` is set and path starts with `app/`, exclude this prefix from path
-
-> Why no "new PHP Trait" or "new PHP Interface" ?
-
-It was in the first release, but it made the contextual menu and the commands bigger, whereas you just have to change the keyword "class" by "trait" or "interface".

@@ -1,37 +1,61 @@
 {
 	"name": "vs-phpcompanion",
+	"version": "2.0.0",
 	"displayName": "PHP Companion",
-	"version": "1.1.1",
-	"description": "Generate code for new classes, insert namespace, ...",
+	"description": "Create new PHP class, run tests, insert namespace, ...",
+	"categories": ["Programming Languages"],
+	"keywords": ["php", "class", "namespace", "test", "tdd", "phpunit"],
 	"icon": "resources/icon.png",
 	"author": "Fred Blanc <findel@free.fr>",
 	"publisher": "blanc-frederic",
 	"engines": {
 		"vscode": "^1.34.0"
 	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/blanc-frederic/vs-phpcompanion.git"
+	},
 	"activationEvents": [
+		"onLanguage:php",
 		"onCommand:phpcompanion.insertNamespace",
-		"onCommand:phpcompanion.newPHPClass"
+		"onCommand:phpcompanion.newPHPClass",
+		"onCommand:phpcompanion.runTests"
 	],
 	"main": "./extension",
 	"contributes": {
 		"commands": [
 			{
-				"command": "phpcompanion.insertNamespace",
-				"title": "Insert Namespace"
+				"command": "phpcompanion.newPHPClass",
+				"category": "File",
+				"title": "New PHP Class"
 			},
 			{
-				"command": "phpcompanion.newPHPClass",
-				"title": "New PHP Class"
+				"command": "phpcompanion.insertNamespace",
+				"title": "Insert Namespace",
+				"category": "PHP Companion",
+				"when": "resourceLangId == php"
+			},
+			{
+				"title": "Run tests",
+				"command": "phpcompanion.runTests",
+				"category": "PHP Companion",
+				"when": "resourceLangId == php || resourceScheme == phpcompanion"
+			},
+			{
+				"title": "Open tests logs",
+				"command": "phpcompanion.openLogs",
+				"category": "PHP Companion",
+				"when": "resourceLangId == php"
+			}
+		],
+		"keybindings": [
+			{
+				"command": "phpcompanion.runTests",
+				"key": "F9",
+				"when": "!inDebugMode"
 			}
 		],
 		"menus": {
-			"commandPalette": [
-				{
-					"command": "phpcompanion.insertNamespace",
-					"when": "resourceLangId == php"
-				}
-			],
 			"explorer/context": [
 				{
 					"command": "phpcompanion.newPHPClass",
@@ -39,10 +63,23 @@
 					"group": "navigation@7"
 				}
 			],
+			"commandPalette": [
+				{
+					"command": "phpcompanion.insertNamespace",
+					"when": "resourceLangId == php"
+				}
+			],
 			"editor/context": [
 				{
 					"command": "phpcompanion.insertNamespace",
 					"when": "resourceLangId == php"
+				}
+			],
+			"editor/title": [
+				{
+					"command": "phpcompanion.runTests",
+					"group": "navigation",
+					"when": "resourceScheme == phpcompanion"
 				}
 			]
 		},
@@ -50,26 +87,50 @@
 			"type": "object",
 			"title": "PHP Companion",
 			"properties": {
-				"phpcompanion.composerJson": {
+				"phpcompanion.activate.createPHPFile": {
+					"type": "boolean",
+					"default": true,
+					"description": "Add \"New PHP class\" command and menu in explorer menu"
+				},
+				"phpcompanion.activate.insertNamespace": {
+					"type": "boolean",
+					"default": true,
+					"description": "Add \"Insert namespace\" command and menu for PHP files"
+				},
+				"phpcompanion.class.composerJson": {
 					"type": "string",
 					"default": "composer.json",
 					"description": "Path to composer.json from workspace rootdir"
 				},
-				"phpcompanion.vendor": {
+				"phpcompanion.class.vendor": {
 					"type": "string",
 					"default": null,
 					"description": "Specifies default vendor if not extracted from composer.json"
 				},
-				"phpcompanion.detectTestCase": {
+				"phpcompanion.class.detectTestCase": {
 					"type": "boolean",
 					"default": true,
 					"description": "Extends PHPUnit TestCase for generated classes with \"Test\" suffix"
+				},
+				"phpcompanion.activate.runTests": {
+					"type": "boolean",
+					"default": true,
+					"description": "Add \"Run tests\" commands and statusbar"
+				},
+				"phpcompanion.tests.script": {
+					"type": "string",
+					"default": "vendor/bin/phpunit",
+					"description": "Command line to run tests (ex: \"vendor/bin/phpunit\", \"bin/phpunit\" or \"phpunit\")"
+				},
+				"phpcompanion.tests.scriptArguments": {
+					"type": "array",
+					"default": [
+						"--colors=never",
+						"--verbose"
+					],
+					"description": "Arguments for tests command line"
 				}
 			}
 		}
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/blanc-frederic/vs-phpcompanion.git"
 	}
 }
