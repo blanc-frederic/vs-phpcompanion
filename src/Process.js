@@ -50,23 +50,6 @@ class Process {
             callback(code)
         })
     }
-
-    kill() {
-        if (!this.#process) {
-            return false
-        }
-
-        this.#process.kill()
-
-        if (!this.#process.killed) {
-            return false
-        }
-
-        this.#output = ''
-        this.#error = null
-        this.#process = null
-        return true
-    }
 }
 
 exports.Process = Process
