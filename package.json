@@ -36,7 +36,7 @@
 				"when": "resourceLangId == php"
 			},
 			{
-				"title": "Launch tests",
+				"title": "Run tests",
 				"command": "phpcompanion.runTests",
 				"category": "PHP Companion",
 				"when": "resourceLangId == php || resourceScheme == phpcompanion"

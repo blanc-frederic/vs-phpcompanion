@@ -18,16 +18,31 @@ Create new PHP files
 
 From explorer, right click on a folder and select "New PHP Class"
 
-... done ! See FAQ to read more about generated namespace
+![New PHP Class screenshot](./resources/new_php_class.png)
+
+See [FAQ](./FAQ.md) to read more about generated namespace
+
+Insert namespace in PHP files
+-----------------------------
+
+Select text or move cursor to the desired position and right click, then choose "Insert namespace" menu item
+
+![Insert namespace screenshot](./resources/insert_namespace.png)
 
 Easily run tests
 ----------------
 
-Type your code and hit F9 (default keybindings).
+Hit F9 (default keybindings) or select the command to run tests
 
+![commands screenshot](./resources/commands.png)
 
-Tests will be executed, and results will show in statusbar
+Tests will be executed, and results will be shown in statusbar
 
+![Status bar screenshot](./resources/status_bar.png)
+
+Click "Open tests logs" and see what happened
+
+![Tests logs screenshot](./resources/open_logs.png)
 
 Configuration
 -------------
@@ -62,24 +77,3 @@ Tip : use `File > Preferences > Settings`, and choose `Workspace` to specify a v
     "--verbose"
 ]
 ```
-
-FAQ
----
-
-> How does it detects namespace ?
-
-First, it search for a vendor prefix (stop as soon as one matches) :
-
-1. compare relative filename (from workspace) with composer entries from `autoload/psr-4`
-2. compare relative filename (from workspace) with composer entries from `autoload-dev/psr-4`
-3. phpcompanion.vendor (if set)
-
-Then, append relative path (from workspace root folder) :
-
-- if vendor prefix was extracted from composer, exclude corresponding path prefix from composer
-- else if path starts with `src/` or `tests/`, exclude this prefix from path
-- else if `phpcompanion.vendor` is set and path starts with `app/`, exclude this prefix from path
-
-> Why no "new PHP Trait" or "new PHP Interface" ?
-
-It was in the first release, but it made the contextual menu and the commands bigger, whereas you just have to change the keyword "class" by "trait" or "interface".

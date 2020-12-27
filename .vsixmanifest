@@ -34,5 +34,6 @@
     <Asset Type="Microsoft.VisualStudio.Code.Manifest" Path="extension/package.json" Addressable="true" />
     <Asset Type="Microsoft.VisualStudio.Services.Content.Details" Path="extension/README.md" Addressable="true" />
     <Asset Type="Microsoft.VisualStudio.Services.Icons.Default" Path="extension/resources/icon.png" Addressable="true" />
+    <Asset Type="Microsoft.VisualStudio.Services.Content.FAQ" Path="extension/FAQ.md" Addressable="true" />
   </Assets>
 </PackageManifest>
