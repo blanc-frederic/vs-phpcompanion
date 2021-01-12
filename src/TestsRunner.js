@@ -49,6 +49,7 @@ class TestsRunner {
 
     async handle(path, code) {
         this.#provider.onDidChangeEmitter.fire(Uri.parse('phpcompanion:Tests'))
+        this.#lastPath = path
 
         const results = this.#parser.scan(this.#process.output)
 
@@ -61,7 +62,6 @@ class TestsRunner {
             return
         }
 
-        this.#lastPath = path
         this.#statusBar.update('done', results)
     }
 }
