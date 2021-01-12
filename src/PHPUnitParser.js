@@ -4,20 +4,28 @@ class PHPUnitParser {
         const resultats = output
             .split('\n')
             .map(
-                value => value.match(/Tests: (\d+).*, Assertions: (\d+).*, (Failures|Errors): (\d+)/)
-                    || value.match(/OK \((\d+) tests, (\d+) assertions\)/)
+                value => value.match(/Tests: (?<tests>\d+)[^,\.]*(, Assertions: (?<assertions>\d+)[^,\.]*)?(, Failures: (?<failures>\d+)[^,\.]*)?(, Errors: (?<errors>\d+)[^,\.]*)?(, Skipped: (?<skipped>\d+)[^,\.]*)?/)
+                    || value.match(/OK \((?<tests>\d+) tests, (?<assertions>\d+) assertions\)/)
             )
             .filter(value => value !== null)
             .pop()
 
-        if (!resultats || resultats.length < 3) {
+        if (!resultats || !resultats.groups.tests) {
             return
         }
 
+        let fails = 0
+        if (resultats.groups.failures) {
+            fails += parseInt(resultats.groups.failures)
+        }
+        if (resultats.groups.errors) {
+            fails += parseInt(resultats.groups.errors)
+        }
+
         return {
-            'tests': resultats[1],
-            'assertions': resultats[2],
-            'failures': resultats[4] ? resultats[4] : 0
+            'tests': parseInt(resultats.groups.tests),
+            'assertions': parseInt(resultats.groups.assertions),
+            'failures': fails
         }
     }
 }
