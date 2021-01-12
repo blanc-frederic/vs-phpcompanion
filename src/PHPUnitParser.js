@@ -10,7 +10,7 @@ class PHPUnitParser {
             .filter(value => value !== null)
             .pop()
 
-        if (!resultats || resultats.groups.tests < 3) {
+        if (!resultats || !resultats.groups.tests) {
             return
         }
 
