@@ -4,27 +4,27 @@ class PHPUnitParser {
         const resultats = output
             .split('\n')
             .map(
-                value => value.match(/Tests: (?<tests>\d+).*(, Assertions: (?<assertions>\d+).*)?(, Failures: (?<failures>\d+).*)?(, Errors: (?<errors>\d+).*)?(, Skipped: (?<skipped>\d+))?.*\.$/)
+                value => value.match(/Tests: (?<tests>\d+)[^,\.]*(, Assertions: (?<assertions>\d+)[^,\.]*)?(, Failures: (?<failures>\d+)[^,\.]*)?(, Errors: (?<errors>\d+)[^,\.]*)?(, Skipped: (?<skipped>\d+)[^,\.]*)?/)
                     || value.match(/OK \((?<tests>\d+) tests, (?<assertions>\d+) assertions\)/)
             )
             .filter(value => value !== null)
             .pop()
 
-        if (!resultats || resultats.tests < 3) {
+        if (!resultats || resultats.groups.tests < 3) {
             return
         }
 
         let fails = 0
-        if (resultats.failures) {
-            fails += resultats.failures
+        if (resultats.groups.failures) {
+            fails += parseInt(resultats.groups.failures)
         }
-        if (resultats.errors) {
-            fails += resultats.errors
+        if (resultats.groups.errors) {
+            fails += parseInt(resultats.groups.errors)
         }
 
         return {
-            'tests': resultats.tests,
-            'assertions': resultats.assertions,
+            'tests': parseInt(resultats.groups.tests),
+            'assertions': parseInt(resultats.groups.assertions),
             'failures': fails
         }
     }
