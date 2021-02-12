@@ -6,13 +6,13 @@ const { getConfig } = require('./config')
 function getNamespaceFromPath(filename) {
     let vendorData = getNamespaceFromComposer(filename)
 
-    let relativeFilename = workspace.asRelativePath(filename)
+    let relativeFilename = workspace.asRelativePath(filename).replace(path.sep, '/')
 
     if (vendorData.startsWith.length > 0) {
         relativeFilename = relativeFilename.substr(vendorData.startsWith.length)
     }
 
-    const pathElements = relativeFilename.split(path.sep)
+    const pathElements = relativeFilename.split('/')
     if (pathElements.length < 2) {
         return vendorData.namespace
     }
