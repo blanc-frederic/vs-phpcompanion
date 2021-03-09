@@ -1,0 +1,27 @@
+{
+	"Class method": {
+		"prefix": "fun",
+		"body": [
+			"${1:public} function ${2:functionName}(${3:${4:Type} \\$${5:arg}}): ${8:void}",
+			"{",
+			"\t$0",
+			"}"
+		]
+	},
+	"Constructor": {
+		"prefix": "con",
+		"body": [
+			"public function __construct(${2:${3:Type} \\$${4:dep}})",
+			"{",
+			"\t\\$this->${4/$//} = \\$$4;$0",
+			"}"
+		]
+	},
+	"Class property": {
+		"prefix": "prop",
+		"body": [
+			"${1:private} ${2:Type} \\$$0;",
+			""
+		]
+	}
+}
