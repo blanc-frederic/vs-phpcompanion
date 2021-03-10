@@ -2,7 +2,7 @@
 	"Class method": {
 		"prefix": "fun",
 		"body": [
-			"${1:public} function ${2:functionName}(${3:${4:Type} \\$${5:arg}}): ${8:void}",
+			"${1:public} function ${2:functionName}(${3:${4:Type} \\$${5:param}}): ${8:void}",
 			"{",
 			"\t$0",
 			"}"
@@ -11,7 +11,7 @@
 	"Constructor": {
 		"prefix": "con",
 		"body": [
-			"public function __construct(${2:${3:Type} \\$${4:dep}})",
+			"public function __construct(${2:${3:Type} \\$${4:param}})",
 			"{",
 			"\t\\$this->${4/$//} = \\$$4;$0",
 			"}"
@@ -23,5 +23,16 @@
 			"${1:private} ${2:Type} \\$$0;",
 			""
 		]
+	},
+	"Constructor with property": {
+		"prefix": "cop",
+		"body": [
+			"public function __construct(",
+			"\t${1:private} ${2:Type} \\$${3:param}",
+			") {",
+			"\t$0",
+			"}"
+		],
+		"description": "Constructor as available with php 8"
 	}
 }

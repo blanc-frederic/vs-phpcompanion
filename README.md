@@ -29,6 +29,43 @@ Select text or move cursor to the desired position and right click, then choose 
 
 ![Insert namespace screenshot](https://raw.githubusercontent.com/blanc-frederic/vs-phpcompanion/main/resources/insert_namespace.png)
 
+Snippets
+--------
+
+Type ```con``` to generate class constructor :
+
+```php
+public function __construct(Type $param)
+{
+    $this->param = $param;
+}
+```
+
+Type ```prop``` to generate class property :
+
+```php
+private Type $;
+```
+
+Type ```fun``` to generate class method :
+
+```php
+public function functionName(Type $param): void
+{
+    
+}
+```
+
+Type ```cop``` to generate class constructor with property (php >= 8.0 required) :
+
+```php
+public function __construct(
+    private Type $param
+) {
+    
+}
+```
+
 Easily run tests
 ----------------
 
@@ -43,37 +80,3 @@ Tests will be executed, and results will be shown in statusbar
 Click "Open tests logs" and see what happened
 
 ![Tests logs screenshot](https://raw.githubusercontent.com/blanc-frederic/vs-phpcompanion/main/resources/open_logs.png)
-
-Configuration
--------------
-
-Tip : use `File > Preferences > Settings`, and choose `Workspace` to specify a value decicated for current workspace only
-
-```json
-// Add "New PHP class" command and menu in explorer menu
-"phpcompanion.activate.createPHPFile": true,
-
-// Add "Insert namespace" command and menu for PHP files
-"phpcompanion.activate.insertNamespace": true,
-
-// Path to composer.json from workspace rootdir
-"phpcompanion.composerJson": "composer.json",
-
-// Specifies default vendor if not found in composer.json
-"phpcompanion.vendor": null,
-
-// Auto extends PHPUnit TestCase for generated classes with "Test" suffix
-"phpcompanion.detectTestCase": true,
-
-// Add "Run tests" commands and statusbar
-"phpcompanion.activate.runTests": true,
-
-// Command line to run tests (ex: "vendor/bin/phpunit", "bin/phpunit" or "phpunit")
-"phpcompanion.testsCommand": "vendor/bin/phpunit",
-
-// Arguments for tests command line
-"phpcompanion.testsCommandArguments": [
-    "--colors=never",
-    "--verbose"
-]
-```
