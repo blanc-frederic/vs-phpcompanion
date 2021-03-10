@@ -1,10 +1,10 @@
 {
 	"name": "vs-phpcompanion",
-	"version": "2.0.6",
+	"version": "2.1.0",
 	"displayName": "PHP Companion",
 	"description": "Create new PHP class, run tests, insert namespace, ...",
 	"categories": ["Programming Languages"],
-	"keywords": ["php", "class", "namespace", "test", "tdd", "phpunit"],
+	"keywords": ["php", "class", "snippets", "namespace", "test", "tdd", "phpunit"],
 	"icon": "resources/icon.png",
 	"author": "Fred Blanc <findel@free.fr>",
 	"publisher": "blanc-frederic",
@@ -83,6 +83,12 @@
 				}
 			]
 		},
+		"snippets": [
+			{
+				"language": "php",
+				"path": "./snippets/php.json"
+			}
+		],
 		"configuration": {
 			"type": "object",
 			"title": "PHP Companion",
