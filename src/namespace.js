@@ -9,7 +9,7 @@ function getNamespaceFromPath(filename) {
     let relativeFilename = workspace.asRelativePath(filename).replace(path.sep, '/')
 
     if (vendorData.startsWith.length > 0) {
-        relativeFilename = relativeFilename.substr(vendorData.startsWith.length)
+        relativeFilename = relativeFilename.substring(vendorData.startsWith.length)
     }
 
     const pathElements = relativeFilename.split('/')
@@ -66,7 +66,7 @@ function getNamespaceFromComposer(filename) {
 
                 if (relativeFilename.startsWith(folder)) {
                     if (vendor.endsWith('\\')) {
-                        vendor = vendor.substr(0, vendor.length - 1)
+                        vendor = vendor.substring(0, vendor.length - 1)
                     }
 
                     if (!folder.endsWith('/')) {

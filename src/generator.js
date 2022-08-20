@@ -25,6 +25,10 @@ function createPHPFile(folder) {
     }
 
     interact.ask('class name').then((name) => {
+        if (name.toLowerCase().endsWith('.php')) {
+            name = name.substring(0, name.length -4)
+        }
+
         if (name === undefined || name.length < 1) {
             return
         }
