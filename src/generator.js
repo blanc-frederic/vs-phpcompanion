@@ -37,7 +37,7 @@ function createPHPFile(folder) {
 
         createNewFile(
             filename,
-            generate('class', name, getNamespaceFromPath(filename))
+            generate(name, getNamespaceFromPath(filename))
         )
     })
 }
@@ -61,22 +61,53 @@ function createNewFile(filename, content) {
     })
 }
 
-function generate(category, name, ns) {
-    if (
-        getConfig('class.detectTestCase', true)
-        && category === 'class'
-        && name !== 'Test'
-        && name.endsWith('Test')
-    ) {
-        category = 'use PHPUnit\\Framework\\TestCase;\n\n' + category
-        name += ' extends TestCase'
+function generate(name, ns) {
+    let category = 'class'
+    let uses = ''
+    let extending = ''
+    let body = ''
+
+    if (detectSuffix(name, 'class.detectTestCase', 'Test')) {
+        uses = 'use PHPUnit\\Framework\\TestCase;\n\n'
+        extending = ' extends TestCase'
+
+    } else if (detectSuffix(name, 'class.detectInterface', 'Interface')) {
+        category = 'interface'
+
+    } else if (detectSuffix(name, 'class.detectSymfonyCommand', 'Command')) {
+        uses = 'use Symfony\\Component\\Console\\Command\\Command;\n'
+            + 'use Symfony\\Component\\Console\\Input\\InputInterface;\n'
+            + 'use Symfony\\Component\\Console\\Output\\OutputInterface;\n\n'
+        extending = ' extends Command'
+        body = 'protected static $defaultName = \'' + classnameToCommand(name) + '\';\n\n'
+            + '    protected function execute(InputInterface $input, OutputInterface $output): int\n'
+            + '    {\n'
+            + '        \n'
+            + '        return Command::SUCCESS;\n'
+            + '    }'
     }
 
     return '<?php\n\n'
         + 'declare(strict_types=1);\n\n'
         + 'namespace ' + ns + ';\n\n'
-        + category + ' ' + name + '\n'
-        + '{\n    \n}\n'
+        + uses
+        + category + ' ' + name + extending + '\n'
+        + '{\n'
+        + '    ' + body + '\n'
+        + '}\n'
+}
+
+function classnameToCommand(name) {
+    return 'app:' + name.substring(0, name.length -7)
+        .replace(/(.)([A-Z][a-z]+)/, '$1:$2')
+        .replace(/([a-z0-9])([A-Z])/, '$1:$2')
+        .toLowerCase()
+}
+
+function detectSuffix(name, option, suffix) {
+    return getConfig(option, true)
+        && name !== suffix
+        && name.endsWith(suffix)
 }
 
 exports.createPHPFile = createPHPFile

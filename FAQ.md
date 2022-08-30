@@ -21,3 +21,5 @@ Then, append relative path (from workspace root folder) :
 > Why no "new PHP Trait" or "new PHP Interface" ?
 
 It was in the first release, but it made the contextual menu and the commands bigger, whereas you just have to change the keyword "class" by "trait" or "interface".
+
+Note : if the name ends with "Interface", its will be typed as interface

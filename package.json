@@ -1,6 +1,6 @@
 {
 	"name": "vs-phpcompanion",
-	"version": "2.1.1",
+	"version": "2.2.0",
 	"displayName": "PHP Companion",
 	"description": "Create new PHP class, run tests, insert namespace, ...",
 	"categories": ["Programming Languages"],
@@ -117,6 +117,16 @@
 					"type": "boolean",
 					"default": true,
 					"description": "Extends PHPUnit TestCase for generated classes with \"Test\" suffix"
+				},
+				"phpcompanion.class.detectInterface": {
+					"type": "boolean",
+					"default": true,
+					"description": "Default type to 'interface' for generated classes with \"Interface\" suffix"
+				},
+				"phpcompanion.class.detectSymfonyCommand": {
+					"type": "boolean",
+					"default": false,
+					"description": "Extends Symfony Command for generated classes with \"Command\" suffix"
 				},
 				"phpcompanion.activate.runTests": {
 					"type": "boolean",
