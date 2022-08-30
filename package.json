@@ -123,11 +123,6 @@
 					"default": true,
 					"description": "Default type to 'interface' for generated classes with \"Interface\" suffix"
 				},
-				"phpcompanion.class.detectSymfonyCommand": {
-					"type": "boolean",
-					"default": false,
-					"description": "Extends Symfony Command for generated classes with \"Command\" suffix"
-				},
 				"phpcompanion.activate.runTests": {
 					"type": "boolean",
 					"default": true,

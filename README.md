@@ -11,7 +11,6 @@ Features
 * Insert namespace for a file
 * Add extends PHPUnit TestCase to classes wich names ends with "Test"
 * Declare an interface if name ends with "Interface"
-* Optionnally add extends Symfony Command to classes wich names ends with "Command"
 * Add command and Keybindings to easily run tests
 * Open tests logs in a virtual document
 

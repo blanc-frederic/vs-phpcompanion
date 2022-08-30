@@ -5,7 +5,6 @@
 ### Added
 
 - detects "Interface" suffix to type as interface
-- detects "Command" suffit to extends Symfony Command
 - this changelog :)
 
 ### Fixed
