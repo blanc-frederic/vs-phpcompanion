@@ -131,6 +131,11 @@
 					"default": true,
 					"description": "Add \"Insert namespace\" command and menu for PHP files"
 				},
+				"phpcompanion.activate.insertStrict": {
+					"type": "boolean",
+					"default": false,
+					"description": "Default to insert declare(strict_types=1); to PHP file"
+				},
 				"phpcompanion.class.composerJson": {
 					"type": "string",
 					"default": "composer.json",
@@ -150,6 +155,11 @@
 					"type": "boolean",
 					"default": true,
 					"description": "Default type to 'interface' for generated classes with \"Interface\" suffix"
+				},
+				"phpcompanion.class.detectTrait": {
+					"type": "boolean",
+					"default": true,
+					"description": "Default type to 'trait' for generated classes with \"Trait\" suffix"
 				},
 				"phpcompanion.activate.runTests": {
 					"type": "boolean",

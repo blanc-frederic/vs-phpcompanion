@@ -2,6 +2,10 @@ const { Uri, window, workspace } = require('vscode')
 const { getNamespaceFromPath } = require('./namespace')
 const interact = require('./interact')
 
+/**
+ * @typedef {"class"|"trait"|"interface"|"test"} ClassType
+ */
+
 function replaceSelectionWithNamespace() {
     const editor = window.activeTextEditor
 
@@ -23,7 +27,11 @@ function createPHPFile(folder) {
         return
     }
 
-    interact.ask('class name').then((name) => {
+    let name = '';
+
+    interact.ask('Class name').then(n => {
+        name = n;
+
         if (name.toLowerCase().endsWith('.php')) {
             name = name.substring(0, name.length -4)
         }
@@ -32,11 +40,35 @@ function createPHPFile(folder) {
             return
         }
 
+        const category = detectCategory(name);
+
+        if (category == 'class') {
+            return window.showQuickPick([
+                "Class",
+                "Trait",
+                "Interface"
+            ], {
+                title: "Choose class type",
+                canPickMany: false,
+                matchOnDescription: true,
+                matchOnDetail: true
+            });
+        }
+
+        return category
+
+    }).then(category => {
+        if (category == undefined) {
+            return
+        }
+
+        category = category.toLowerCase();
+
         const filename = folder.fsPath + '/' + name + '.php'
 
         createNewFile(
             filename,
-            generate(name, getNamespaceFromPath(filename))
+            generate(name, getNamespaceFromPath(filename), category)
         )
     })
 }
@@ -60,24 +92,39 @@ function createNewFile(filename, content) {
     })
 }
 
-function generate(name, ns) {
-    let category = 'class'
+/**
+ * @param {ClassType} category
+ */
+function generate(name, ns, category) {
     let uses = ''
     let extending = ''
 
-    if (detectSuffix(name, 'class.detectTestCase', 'Test')) {
+    if (category == 'test') {
         uses = 'use PHPUnit\\Framework\\TestCase;\n\n'
         extending = ' extends TestCase'
-    } else if (detectSuffix(name, 'class.detectInterface', 'Interface')) {
-        category = 'interface'
     }
 
     return '<?php\n\n'
-        + 'declare(strict_types=1);\n\n'
+        + (getConfig('activate.insertStrict', false) ? 'declare(strict_types=1);\n\n' : '')
         + 'namespace ' + ns + ';\n\n'
         + uses
         + category + ' ' + name + extending + '\n'
         + '{\n    \n}\n'
+}
+
+/**
+ * @return {ClassType}
+ */
+function detectCategory(name) {
+    if (detectSuffix(name, 'class.detectTestCase', 'Test')) {
+        return 'test'
+    } else if (detectSuffix(name, 'class.detectInterface', 'Interface')) {
+        return 'interface'
+    } else if (detectSuffix(name, 'class.detectTrait', 'Trait')) {
+        return 'trait'
+    } else {
+        return 'class'
+    }
 }
 
 function detectSuffix(name, option, suffix) {
