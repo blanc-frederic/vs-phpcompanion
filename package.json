@@ -134,7 +134,7 @@
 				"phpcompanion.class.insertStrict": {
 					"type": "boolean",
 					"default": true,
-					"description": "Default to insert declare(strict_types=1); to PHP file"
+					"description": "Insert 'declare(strict_types=1);' into generated classes"
 				},
 				"phpcompanion.class.composerJson": {
 					"type": "string",
