@@ -100,6 +100,7 @@ function generate(name, ns, category) {
     let extending = ''
 
     if (category == 'test') {
+        category = 'class'
         uses = 'use PHPUnit\\Framework\\TestCase;\n\n'
         extending = ' extends TestCase'
     }
