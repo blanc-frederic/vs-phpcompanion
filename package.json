@@ -103,7 +103,7 @@
 					"default": true,
 					"description": "Add \"Insert namespace\" command and menu for PHP files"
 				},
-				"phpcompanion.activate.insertStrict": {
+				"phpcompanion.class.insertStrict": {
 					"type": "boolean",
 					"default": false,
 					"description": "Default to insert declare(strict_types=1); to PHP file"
