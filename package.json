@@ -10,6 +10,7 @@
 		"php",
 		"class",
 		"snippets",
+		"refactor",
 		"namespace",
 		"test",
 		"tdd",
@@ -39,6 +40,12 @@
 				"command": "phpcompanion.newPHPClass",
 				"category": "File",
 				"title": "New PHP Class"
+			},
+			{
+				"title": "Extract method",
+				"command": "phpcompanion.extractMethod",
+				"category": "Refactor",
+				"when": "resourceLangId == php"
 			},
 			{
 				"command": "phpcompanion.insertNamespace",
@@ -84,6 +91,11 @@
 				{
 					"command": "phpcompanion.insertNamespace",
 					"when": "resourceLangId == php"
+				},
+				{
+					"command": "phpcompanion.extractMethod",
+					"when": "editorLangId == php",
+					"group": "refactor"
 				}
 			],
 			"editor/title": [
@@ -108,6 +120,11 @@
 					"type": "boolean",
 					"default": true,
 					"description": "Add \"New PHP class\" command and menu in explorer menu"
+				},
+				"phpcompanion.activate.refactor.extractMethod": {
+					"type": "boolean",
+					"default": true,
+					"description": "Add \"Extract Method (PHP)\" to Refactor menu for php files"
 				},
 				"phpcompanion.activate.insertNamespace": {
 					"type": "boolean",
@@ -153,12 +170,20 @@
 					"description": "Arguments for tests command line"
 				}
 			}
-		}
+		},
+		"codeActions": [
+			{
+				"language": "php",
+				"kind": "refactor.extract",
+				"title": "Extract to method"
+			}
+		]
 	},
 	"scripts": {
 		"build": "esbuild extension.js --bundle --external:vscode --minify --platform=node --outfile=dist/extension.js"
 	},
 	"dependencies": {
-		"esbuild": "^0.25.8"
+		"esbuild": "^0.25.8",
+		"php-parser": "^3.2.5"
 	}
 }

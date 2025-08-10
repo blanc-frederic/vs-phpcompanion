@@ -13,6 +13,7 @@ Features
 * Declare an interface if name ends with "Interface"
 * Add command and Keybindings to easily run tests
 * Open tests logs in a virtual document
+* PHP Refactoring support : "Extract method" and "Inline method"
 
 Create new PHP files
 --------------------

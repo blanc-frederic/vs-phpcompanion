@@ -1,5 +1,6 @@
 const { commands, languages, Uri, window, workspace } = require('vscode')
 const { createPHPFile, replaceSelectionWithNamespace } = require('./src/generator')
+const { ExtractMethodProvider, extractMethod } = require('./src/Refactor')
 const { TestsRunner } = require('./src/TestsRunner')
 const { TestsStatusBar } = require('./src/TestsStatusBar')
 const { Process } = require('./src/Process')
@@ -13,6 +14,15 @@ function activate(context) {
         context.subscriptions.push(
             commands.registerCommand('phpcompanion.newPHPClass', (folder) => createPHPFile(folder))
         )
+    }
+
+    if (config.get('activate.refactor.extractMethod', true)) {
+        context.subscriptions.push(
+            commands.registerCommand('phpcompanion.extractMethod', extractMethod),
+            languages.registerCodeActionsProvider('php', new ExtractMethodProvider(), {
+                providedCodeActionKinds: ExtractMethodProvider.providedCodeActionKinds
+            })
+        );
     }
 
     if (config.get('activate.insertNamespace', true)) {
