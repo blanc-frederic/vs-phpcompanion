@@ -2,7 +2,10 @@
 
 ## [3.0.0]
 
+### Added
 
+- Refactor : extract method
+- Refactor : inline method
 
 ## [2.2.0]
 
