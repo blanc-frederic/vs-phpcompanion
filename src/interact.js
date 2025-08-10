@@ -1,13 +1,6 @@
 const { Position, Selection, window } = require('vscode')
 
 /**
- * @param {string} message
- */
-function error(message) {
-    window.showErrorMessage(message)
-}
-
-/**
  * @return {Thenable}
  */
 function askFolder() {
@@ -39,7 +32,6 @@ function moveCursorTo(line, character = 0) {
     ]
 }
 
-exports.error = error
 exports.askFolder = askFolder
 exports.ask = ask
 exports.moveCursorTo = moveCursorTo

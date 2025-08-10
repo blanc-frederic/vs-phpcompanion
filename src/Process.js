@@ -1,5 +1,5 @@
 const { spawn } = require('child_process')
-const { getConfig } = require('./config')
+const { workspace } = require('vscode')
 
 class Process {
     #process
@@ -18,13 +18,14 @@ class Process {
         this.#output = ''
         this.#error = false
 
-        const command = getConfig('tests.script', '')
+        const config = workspace.getConfiguration('phpcompanion');
+        const command = config.get('tests.script', '')
         if (command == '') {
             this.#output = 'Error : no tests script. Please set in settings'
             return
         }
 
-        const args = getConfig('tests.scriptArguments', [])
+        const args = config.get('tests.scriptArguments', [])
         this.#output = '> ' + command + ' ' + args.join(' ') + '\n\n'
 
         this.#process = spawn(command, args, { 'cwd': cwd })

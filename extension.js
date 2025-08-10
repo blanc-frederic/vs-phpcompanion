@@ -1,6 +1,5 @@
 const { commands, languages, Uri, window, workspace } = require('vscode')
 const { createPHPFile, replaceSelectionWithNamespace } = require('./src/generator')
-const { getConfig } = require('./src/config')
 const { TestsRunner } = require('./src/TestsRunner')
 const { TestsStatusBar } = require('./src/TestsStatusBar')
 const { Process } = require('./src/Process')
@@ -8,19 +7,21 @@ const { DocumentProvider } = require('./src/DocumentProvider')
 const { PHPUnitParser } = require('./src/PHPUnitParser')
 
 function activate(context) {
-    if (getConfig('activate.createPHPFile', true)) {
+    const config = workspace.getConfiguration('phpcompanion');
+
+    if (config.get('activate.createPHPFile', true)) {
         context.subscriptions.push(
             commands.registerCommand('phpcompanion.newPHPClass', (folder) => createPHPFile(folder))
         )
     }
 
-    if (getConfig('activate.insertNamespace', true)) {
+    if (config.get('activate.insertNamespace', true)) {
         context.subscriptions.push(
             commands.registerCommand('phpcompanion.insertNamespace', replaceSelectionWithNamespace),
         )
     }
 
-    if (getConfig('activate.runTests', true)) {
+    if (config.get('activate.runTests', true)) {
         const statusBar = new TestsStatusBar()
         const process = new Process()
         const provider = new DocumentProvider(process)
