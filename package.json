@@ -1,27 +1,38 @@
 {
 	"name": "vs-phpcompanion",
-	"version": "2.2.0",
+	"version": "3.0.0",
 	"displayName": "PHP Companion",
 	"description": "Create new PHP class, run tests, insert namespace, ...",
-	"categories": ["Programming Languages"],
-	"keywords": ["php", "class", "snippets", "namespace", "test", "tdd", "phpunit"],
+	"categories": [
+		"Programming Languages"
+	],
+	"keywords": [
+		"php",
+		"class",
+		"snippets",
+		"namespace",
+		"test",
+		"tdd",
+		"phpunit"
+	],
 	"icon": "resources/icon.png",
 	"author": "Fred Blanc <findel@free.fr>",
 	"publisher": "blanc-frederic",
 	"engines": {
-		"vscode": "^1.34.0"
+		"vscode": "^1.75.0"
 	},
+	"extensionKind": [
+		"ui",
+		"workspace"
+	],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/blanc-frederic/vs-phpcompanion.git"
 	},
 	"activationEvents": [
-		"onLanguage:php",
-		"onCommand:phpcompanion.insertNamespace",
-		"onCommand:phpcompanion.newPHPClass",
-		"onCommand:phpcompanion.runTests"
+		"onLanguage:php"
 	],
-	"main": "./extension",
+	"main": "dist/extension",
 	"contributes": {
 		"commands": [
 			{
@@ -143,5 +154,11 @@
 				}
 			}
 		}
+	},
+	"scripts": {
+		"build": "esbuild extension.js --bundle --external:vscode --minify --platform=node --outfile=dist/extension.js"
+	},
+	"dependencies": {
+		"esbuild": "^0.25.8"
 	}
 }
