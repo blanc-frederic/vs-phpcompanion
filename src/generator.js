@@ -1,5 +1,4 @@
 const { Uri, window, workspace } = require('vscode')
-const { getConfig } = require('./config')
 const { getNamespaceFromPath } = require('./namespace')
 const interact = require('./interact')
 
@@ -46,7 +45,7 @@ function createNewFile(filename, content) {
     const fileUri = Uri.file(filename)
 
     workspace.fs.stat(fileUri).then(() => {
-        interact.error(
+        window.showErrorMessage(
             'File "' + workspace.asRelativePath(fileUri) + '" already exists'
         )
     }, () => {
@@ -82,7 +81,8 @@ function generate(name, ns) {
 }
 
 function detectSuffix(name, option, suffix) {
-    return getConfig(option, true)
+    const config = workspace.getConfiguration('phpcompanion');
+    return config.get(option, true)
         && name !== suffix
         && name.endsWith(suffix)
 }

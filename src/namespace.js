@@ -1,7 +1,6 @@
 const { Uri, workspace } = require('vscode')
 const path = require('path')
 const fs = require('fs')
-const { getConfig } = require('./config')
 
 function getNamespaceFromPath(filename) {
     let vendorData = getNamespaceFromComposer(filename)
@@ -33,8 +32,9 @@ function getNamespaceFromPath(filename) {
 }
 
 function getComposerFileFor(filename) {
-    const configComposer = getConfig('class.composerJson')
-    if (configComposer.length < 1) {
+    const config = workspace.getConfiguration('phpcompanion');
+    const configComposer = config.get('class.composerJson', null)
+    if (! configComposer || configComposer.length < 1) {
         return null
     }
 
@@ -43,8 +43,9 @@ function getComposerFileFor(filename) {
 }
 
 function getNamespaceFromComposer(filename) {
+    const config = workspace.getConfiguration('phpcompanion');
     let defaultVendor = {
-        'namespace': getConfig('class.vendor'),
+        'namespace': config.get('class.vendor', ''),
         'startsWith': ''
     }
 
