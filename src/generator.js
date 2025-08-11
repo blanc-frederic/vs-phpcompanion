@@ -2,10 +2,6 @@ const { Uri, window, workspace } = require('vscode')
 const { getNamespaceFromPath } = require('./namespace')
 const interact = require('./interact')
 
-/**
- * @typedef {"class"|"trait"|"interface"|"test"} ClassType
- */
-
 function replaceSelectionWithNamespace() {
     const editor = window.activeTextEditor
 
@@ -27,11 +23,7 @@ function createPHPFile(folder) {
         return
     }
 
-    let name = '';
-
-    interact.ask('Class name').then(n => {
-        name = n;
-
+    interact.ask('Class name').then(name => {
         if (name.toLowerCase().endsWith('.php')) {
             name = name.substring(0, name.length -4)
         }
@@ -41,10 +33,6 @@ function createPHPFile(folder) {
         }
 
         const category = detectCategory(name);
-
-        return category
-
-    }).then(category => {
         const filename = folder.fsPath + '/' + name + '.php'
 
         createNewFile(
@@ -73,9 +61,6 @@ function createNewFile(filename, content) {
     })
 }
 
-/**
- * @param {ClassType} category
- */
 function generate(name, ns, category) {
     let uses = ''
     let extending = ''
@@ -86,17 +71,16 @@ function generate(name, ns, category) {
         extending = ' extends TestCase'
     }
 
+    const config = workspace.getConfiguration('phpcompanion');
+
     return '<?php\n\n'
-        + (getConfig('activate.insertStrict', false) ? 'declare(strict_types=1);\n\n' : '')
+        + (config.get('class.insertStrict', true) ? 'declare(strict_types=1);\n\n' : '')
         + 'namespace ' + ns + ';\n\n'
         + uses
         + category + ' ' + name + extending + '\n'
         + '{\n    \n}\n'
 }
 
-/**
- * @return {ClassType}
- */
 function detectCategory(name) {
     if (detectSuffix(name, 'class.detectTestCase', 'Test')) {
         return 'test'
