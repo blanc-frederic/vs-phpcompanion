@@ -42,19 +42,6 @@ function createPHPFile(folder) {
 
         const category = detectCategory(name);
 
-        if (category == 'class') {
-            return window.showQuickPick([
-                "Class",
-                "Trait",
-                "Interface"
-            ], {
-                title: "Choose class type",
-                canPickMany: false,
-                matchOnDescription: true,
-                matchOnDetail: true
-            });
-        }
-
         return category
 
     }).then(category => {
