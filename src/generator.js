@@ -23,7 +23,7 @@ function createPHPFile(folder) {
         return
     }
 
-    interact.ask('class name').then((name) => {
+    interact.ask('Class name').then(name => {
         if (name.toLowerCase().endsWith('.php')) {
             name = name.substring(0, name.length -4)
         }
@@ -32,11 +32,12 @@ function createPHPFile(folder) {
             return
         }
 
+        const category = detectCategory(name);
         const filename = folder.fsPath + '/' + name + '.php'
 
         createNewFile(
             filename,
-            generate(name, getNamespaceFromPath(filename))
+            generate(name, getNamespaceFromPath(filename), category)
         )
     })
 }
@@ -60,24 +61,36 @@ function createNewFile(filename, content) {
     })
 }
 
-function generate(name, ns) {
-    let category = 'class'
+function generate(name, ns, category) {
     let uses = ''
     let extending = ''
 
-    if (detectSuffix(name, 'class.detectTestCase', 'Test')) {
+    if (category == 'test') {
+        category = 'class'
         uses = 'use PHPUnit\\Framework\\TestCase;\n\n'
         extending = ' extends TestCase'
-    } else if (detectSuffix(name, 'class.detectInterface', 'Interface')) {
-        category = 'interface'
     }
 
+    const config = workspace.getConfiguration('phpcompanion');
+
     return '<?php\n\n'
-        + 'declare(strict_types=1);\n\n'
+        + (config.get('class.insertStrict', true) ? 'declare(strict_types=1);\n\n' : '')
         + 'namespace ' + ns + ';\n\n'
         + uses
         + category + ' ' + name + extending + '\n'
         + '{\n    \n}\n'
+}
+
+function detectCategory(name) {
+    if (detectSuffix(name, 'class.detectTestCase', 'Test')) {
+        return 'test'
+    } else if (detectSuffix(name, 'class.detectInterface', 'Interface')) {
+        return 'interface'
+    } else if (detectSuffix(name, 'class.detectTrait', 'Trait')) {
+        return 'trait'
+    } else {
+        return 'class'
+    }
 }
 
 function detectSuffix(name, option, suffix) {

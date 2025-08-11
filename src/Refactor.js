@@ -197,7 +197,7 @@ function extractMethod(document, range) {
         return;
     }
 
-    ask('method name').then(async (name) => {
+    ask('Method name').then(async (name) => {
         if (name === undefined || name.length < 1) {
             return
         }
