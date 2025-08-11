@@ -46,12 +46,6 @@ function createPHPFile(folder) {
         return category
 
     }).then(category => {
-        if (category == undefined) {
-            return
-        }
-
-        category = category.toLowerCase();
-
         const filename = folder.fsPath + '/' + name + '.php'
 
         createNewFile(
