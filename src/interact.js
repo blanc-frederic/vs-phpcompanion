@@ -15,9 +15,7 @@ function askFolder() {
  * @return {Thenable}
  */
 function ask(subject) {
-    return window.showInputBox({
-        prompt: subject
-    })
+    return window.showInputBox({ prompt: subject })
 }
 
 /**

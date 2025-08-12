@@ -5,7 +5,7 @@
 ### Added
 
 - Refactor : extract method
-- Refactor : inline method
+- Refactor : extract variable
 
 ## [2.2.0]
 
