@@ -2,13 +2,22 @@ const PhpParser = require('php-parser');
 const { CodeAction, CodeActionKind, Position, workspace, WorkspaceEdit, window } = require('vscode');
 const { ask } = require('./interact');
 
-function isPartOfAssignment(node, startOffset, endOffset) {
+function isPartial(node, startOffset, endOffset) {
     if (
         node.kind === 'assign'
         && node.left.loc
         && node.left.loc.end.offset <= startOffset
         && node.right.loc
         && node.right.loc.start.offset >= startOffset
+    ) {
+        return true;
+    }
+
+    if (
+        node.kind === 'bin'
+        && node.loc
+        && node.loc.end.offset >= startOffset
+        && node.loc.start.offset <= endOffset
     ) {
         return true;
     }
@@ -22,12 +31,12 @@ function isPartOfAssignment(node, startOffset, endOffset) {
         if (Array.isArray(child)) {
             for (const c of child) {
                 if (c && typeof c === 'object') {
-                    const result = isPartOfAssignment(c, startOffset, endOffset);
+                    const result = isPartial(c, startOffset, endOffset);
                     if (result) return result;
                 }
             }
         } else if (child && typeof child === 'object') {
-            const result = isPartOfAssignment(child, startOffset, endOffset);
+            const result = isPartial(child, startOffset, endOffset);
             if (result) return result;
         }
     }
@@ -157,6 +166,98 @@ function getEditorIndent(document) {
     return '\t';
 }
 
+function mergeVariables(variables) {
+    return variables.map(v => '$' + v).join(', ');
+}
+
+function getMethodCall(name, params, returnVariables, isPart) {
+    let assign = '';
+    if (returnVariables.length === 1) {
+        assign = `$${returnVariables[0]} = `;
+    } else if (returnVariables.length > 1) {
+        assign = '[' + mergeVariables(returnVariables) + '] = ';
+    }
+
+    return assign + '$this->' + name + '(' + mergeVariables(params) + ')' + (isPart ? '' : ';');
+}
+
+function getMethodDefinition(name, params, returnVariables, indent, body, part) {
+    const newLine = `\n${indent}`;
+    const paramList = mergeVariables(params);
+    const signature = `private function ${name}(${paramList})`;
+
+    let returnType = `: void${newLine}`;
+    let prefix = '';
+    let returnStmt = '';
+    if (part) {
+        returnType = ' ';
+        prefix = 'return ';
+        returnStmt = (body.substring(body.length -1) !== ';') ? ';' : '';
+    } else if (returnVariables.length === 1) {
+        returnType = ' ';
+        returnStmt = `${newLine}${indent}return $${returnVariables[0]};`;
+    } else if (returnVariables.length > 1) {
+        returnType = `: array${newLine}`;
+        const returnList = mergeVariables(returnVariables);
+        returnStmt = `${newLine}${indent}return [${returnList}];`;
+    }
+
+    return `${newLine}${signature}${returnType}{${newLine}${indent}${prefix}${body}${returnStmt}${newLine}}\n`;
+}
+
+function findStatement(ast, offsetStart, offsetEnd) {
+    let statement = null;
+    walkChild(ast, node => {
+        if (
+            node.loc
+            && node.loc.start.offset <= offsetStart
+            && node.loc.end.offset >= offsetEnd
+            && [
+                'expressionstatement',
+                'return',
+                'if',
+                'foreach',
+                'for',
+                'while',
+                'dowhile',
+                'switch',
+                'throw'
+            ].includes(node.kind)
+        ) {
+            statement = node;
+        }
+    });
+    return statement;
+}
+
+function isExtractVariablePossible(text) {
+    const forbiddenTokens = [
+        'if',
+        'else',
+        'return',
+        'throw',
+        'try',
+        'catch',
+        'finally',
+        ';',
+        '{',
+        '}'
+    ];
+    const lowered = text.toLowerCase();
+    return !forbiddenTokens.some(token => lowered.includes(token));
+}
+
+function getIndentation(lineText) {
+  const match = lineText.match(/^(\s*)/);
+  return match ? match[1] : '';
+}
+
+function createRefactorAction(title, command, document, range) {
+    const action = new CodeAction(title, CodeActionKind.RefactorExtract);
+    action.command = { title: title, command: command, arguments: [document, range] };
+    return action;
+}
+
 function extractMethod(document, range) {
     if (!document || !range) {
         if (! window.activeTextEditor) {
@@ -191,8 +292,8 @@ function extractMethod(document, range) {
     const returnVariables = usedVariables(enclosingMethod, selectionEnd)
         .filter(v => assignedInSelection.includes(v));
 
-    nodeAssign = isPartOfAssignment(enclosingMethod, selectionStart, selectionEnd);
-    if (nodeAssign && returnVariables.length > 0) {
+    const isPart = isPartial(enclosingMethod, selectionStart, selectionEnd);
+    if (isPart && returnVariables.length > 0) {
         window.showErrorMessage('Unsafe refactoring : more than one returned variable in assignment');
         return;
     }
@@ -208,70 +309,86 @@ function extractMethod(document, range) {
         edit.insert(
             document.uri,
             insertPos,
-            getMethodDefinition(name, paramList, returnVariables, getEditorIndent(document), selectedText, nodeAssign)
+            getMethodDefinition(name, paramList, returnVariables, getEditorIndent(document), selectedText, isPart)
         );
-        edit.replace(document.uri, range, getMethodCall(name, paramList, returnVariables));
+        edit.replace(document.uri, range, getMethodCall(name, paramList, returnVariables, isPart));
         await workspace.applyEdit(edit);
-    })
+    });
 }
 
-function mergeVariables(variables) {
-    return variables.map(v => '$' + v).join(', ');
-}
-
-function getMethodCall(name, params, returnVariables) {
-    let assign = '';
-    if (returnVariables.length === 1) {
-        assign = `$${returnVariables[0]} = `;
-    } else if (returnVariables.length > 1) {
-        assign = '[' + mergeVariables(returnVariables) + '] = ';
+async function extractVariable(document, range) {
+    if (!document || !range) {
+        if (!window.activeTextEditor) {
+            return;
+        }
+        document = window.activeTextEditor.document;
+        range = window.activeTextEditor.selection;
     }
 
-    return assign + '$this->' + name + '(' + mergeVariables(params) + ');';
-}
-
-function getMethodDefinition(name, params, returnVariables, indent, body, assign) {
-    const newLine = `\n${indent}`;
-    const paramList = mergeVariables(params);
-    const signature = `private function ${name}(${paramList})`;
-
-    let returnType = `: void${newLine}`;
-    let prefix = '';
-    let returnStmt = '';
-    if (assign) {
-        returnType = ' ';
-        prefix = 'return ';
-    } else if (returnVariables.length === 1) {
-        returnType = ' ';
-        returnStmt = `${newLine}${indent}return $${returnVariables[0]};`;
-    } else if (returnVariables.length > 1) {
-        returnType = `: array${newLine}`;
-        const returnList = mergeVariables(returnVariables);
-        returnStmt = `${newLine}${indent}return [${returnList}];`;
-    }
-
-    return `${newLine}${signature}${returnType}{${newLine}${indent}${prefix}${body}${returnStmt}${newLine}}\n`;
-}
-
-class ExtractMethodProvider {
-  static providedCodeActionKinds = [
-    CodeActionKind.RefactorExtract
-  ];
-
-  provideCodeActions(document, range, context, token) {
     if (range.isEmpty) return;
 
-    const action = new CodeAction("Extract to method", CodeActionKind.RefactorExtract);
+    const selectedText = document.getText(range).trim();
+    if (!isExtractVariablePossible(selectedText)) {
+        window.showErrorMessage('Invalid selection to extract Variable');
+        return;
+    }
 
-    action.command = {
-      title: "Extract to method",
-      command: "phpcompanion.extractMethod",
-      arguments: [document, range]
-    };
+    const parser = new PhpParser.Engine({ ast: { withPositions: true } });
+    const ast = parser.parseCode(document.getText());
+    const statementNode = findStatement(
+        ast,
+        document.offsetAt(range.start),
+        document.offsetAt(range.end)
+    );
+    if (!statementNode) {
+        window.showErrorMessage('Invalid selection to extract Variable');
+        return;
+    }
 
-    return [action];
+    ask('Variable name').then(async (variableName) => {
+        if (!variableName) return;
+
+        const insertLine = statementNode.loc.start.line - 1;
+        const phpCode = getIndentation(document.lineAt(insertLine).text)
+            + '$' + variableName + ' = ' + selectedText + ";\n";
+
+        const edit = new WorkspaceEdit();
+        edit.insert(document.uri, new Position(insertLine, 0), phpCode);
+        edit.replace(document.uri, range, '$' + variableName);
+        await workspace.applyEdit(edit);
+    });
+}
+
+class RefactorProvider {
+  static providedCodeActionKinds = [CodeActionKind.RefactorExtract];
+
+  provideCodeActions(document, range, context, token) {
+    if (range.isEmpty) return [];
+
+    let actions = [];
+
+    const selectedText = document.getText(range).trim();
+    if (isExtractVariablePossible(selectedText)) {
+        actions.push(createRefactorAction(
+            "Extract to variable",
+            "phpcompanion.extractVariable",
+            document,
+            range
+        ));
+    }
+
+    actions.push(createRefactorAction(
+            "Extract to method",
+            "phpcompanion.extractMethod",
+            document,
+            range
+        ));
+
+    return actions;
   }
 }
 
 exports.extractMethod = extractMethod;
-exports.ExtractMethodProvider = ExtractMethodProvider;
+exports.extractVariable = extractVariable;
+exports.RefactorProvider = RefactorProvider;
+

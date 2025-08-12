@@ -1,6 +1,6 @@
 const { commands, languages, Uri, window, workspace } = require('vscode')
 const { createPHPFile, replaceSelectionWithNamespace } = require('./src/generator')
-const { ExtractMethodProvider, extractMethod } = require('./src/Refactor')
+const { RefactorProvider, extractMethod, extractVariable } = require('./src/Refactor')
 const { TestsRunner } = require('./src/TestsRunner')
 const { TestsStatusBar } = require('./src/TestsStatusBar')
 const { Process } = require('./src/Process')
@@ -18,9 +18,23 @@ function activate(context) {
 
     if (config.get('activate.refactor.extractMethod', true)) {
         context.subscriptions.push(
-            commands.registerCommand('phpcompanion.extractMethod', extractMethod),
-            languages.registerCodeActionsProvider('php', new ExtractMethodProvider(), {
-                providedCodeActionKinds: ExtractMethodProvider.providedCodeActionKinds
+            commands.registerCommand('phpcompanion.extractMethod', extractMethod)
+        );
+    }
+
+    if (config.get('activate.refactor.extractVariable', true)) {
+        context.subscriptions.push(
+            commands.registerCommand('phpcompanion.extractVariable', extractVariable)
+        );
+    }
+
+    if (
+        config.get('activate.refactor.extractMethod', true)
+        || config.get('activate.refactor.extractVariable', true)
+    ) {
+        context.subscriptions.push(
+            languages.registerCodeActionsProvider('php', new RefactorProvider(), {
+                providedCodeActionKinds: RefactorProvider.providedCodeActionKinds
             })
         );
     }

@@ -2,7 +2,7 @@
 	"name": "vs-phpcompanion",
 	"version": "3.0.0",
 	"displayName": "PHP Companion",
-	"description": "Create new PHP class, run tests, insert namespace, ...",
+	"description": "Create new PHP class, run tests, refactor, insert namespace, ...",
 	"categories": [
 		"Programming Languages"
 	],
@@ -42,15 +42,21 @@
 				"title": "New PHP Class"
 			},
 			{
+				"command": "phpcompanion.insertNamespace",
+				"title": "Insert Namespace",
+				"category": "PHP Companion",
+				"when": "resourceLangId == php"
+			},
+			{
 				"title": "Extract method",
 				"command": "phpcompanion.extractMethod",
 				"category": "Refactor",
 				"when": "resourceLangId == php"
 			},
 			{
-				"command": "phpcompanion.insertNamespace",
-				"title": "Insert Namespace",
-				"category": "PHP Companion",
+				"title": "Extract variable",
+				"command": "phpcompanion.extractVariable",
+				"category": "Refactor",
 				"when": "resourceLangId == php"
 			},
 			{
@@ -81,21 +87,10 @@
 					"group": "navigation@7"
 				}
 			],
-			"commandPalette": [
-				{
-					"command": "phpcompanion.insertNamespace",
-					"when": "resourceLangId == php"
-				}
-			],
 			"editor/context": [
 				{
 					"command": "phpcompanion.insertNamespace",
 					"when": "resourceLangId == php"
-				},
-				{
-					"command": "phpcompanion.extractMethod",
-					"when": "editorLangId == php",
-					"group": "refactor"
 				}
 			],
 			"editor/title": [
@@ -121,15 +116,20 @@
 					"default": true,
 					"description": "Add \"New PHP class\" command and menu in explorer menu"
 				},
-				"phpcompanion.activate.refactor.extractMethod": {
-					"type": "boolean",
-					"default": true,
-					"description": "Add \"Extract Method (PHP)\" to Refactor menu for php files"
-				},
 				"phpcompanion.activate.insertNamespace": {
 					"type": "boolean",
 					"default": true,
 					"description": "Add \"Insert namespace\" command and menu for PHP files"
+				},
+				"phpcompanion.activate.refactor.extractMethod": {
+					"type": "boolean",
+					"default": true,
+					"description": "Add \"Extract Method\" to Refactor menu for php files"
+				},
+				"phpcompanion.activate.refactor.extractVariable": {
+					"type": "boolean",
+					"default": true,
+					"description": "Add \"Extract Variable\" to Refactor menu for php files"
 				},
 				"phpcompanion.class.insertStrict": {
 					"type": "boolean",
@@ -180,14 +180,7 @@
 					"description": "Arguments for tests command line"
 				}
 			}
-		},
-		"codeActions": [
-			{
-				"language": "php",
-				"kind": "refactor.extract",
-				"title": "Extract to method"
-			}
-		]
+		}
 	},
 	"scripts": {
 		"build": "esbuild extension.js --bundle --external:vscode --minify --platform=node --outfile=dist/extension.js"
