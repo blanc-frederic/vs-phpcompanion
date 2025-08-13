@@ -260,14 +260,30 @@ function createRefactorAction(title, command, document, range) {
     return action;
 }
 
-function extractMethod(document, range) {
-    if (!document || !range) {
-        if (! window.activeTextEditor) {
-            return;
-        }
-        document = window.activeTextEditor.document;
-        range = window.activeTextEditor.selection;
+function createRewriteAction(title, command, document, range) {
+    const action = new CodeAction(title, CodeActionKind.RefactorRewrite);
+    action.command = { title: title, command: command, arguments: [document, range] };
+    return action;
+}
+
+function ensureDocumentRange(document, range) {
+    if (document && range) {
+        return [document, range];
     }
+
+    if (! window.activeTextEditor) {
+        return;
+    }
+
+    return [
+        window.activeTextEditor.document,
+        window.activeTextEditor.selection
+    ];
+}
+
+function extractMethod(document, range) {
+    [document, range] = ensureDocumentRange(document, range);
+    if (! document) return;
 
     if (range.isEmpty) return;
 
@@ -335,13 +351,8 @@ function extractMethod(document, range) {
 }
 
 async function extractVariable(document, range) {
-    if (!document || !range) {
-        if (!window.activeTextEditor) {
-            return;
-        }
-        document = window.activeTextEditor.document;
-        range = window.activeTextEditor.selection;
-    }
+    [document, range] = ensureDocumentRange(document, range);
+    if (! document) return;
 
     if (range.isEmpty) return;
 
@@ -377,40 +388,70 @@ async function extractVariable(document, range) {
     });
 }
 
+async function inlineCode(document, range) {
+    [document, range] = ensureDocumentRange(document, range);
+    if (! document) return;
+
+    const selectedText = document.getText(range).trim();
+    const newText = selectedText.replaceAll(/\s+/g, ' ');
+
+    if (selectedText !== newText) {
+        const edit = new WorkspaceEdit();
+        edit.replace(document.uri, range, newText);
+        await workspace.applyEdit(edit);
+    }
+}
+
 class RefactorProvider {
-  static providedCodeActionKinds = [CodeActionKind.RefactorExtract];
+    static providedCodeActionKinds = [
+        CodeActionKind.RefactorExtract,
+        CodeActionKind.RefactorRewrite
+    ];
 
-  provideCodeActions(document, range, context, token) {
-    if (range.isEmpty) return [];
-
-    let actions = [];
-
-    if (config.get('activate.refactor.extractVariable', true)) {
+    provideCodeActions(document, range, context, token) {
+        if (range.isEmpty) return [];
         const selectedText = document.getText(range).trim();
-        if (isExtractVariablePossible(selectedText)) {
+
+        const config = workspace.getConfiguration('phpcompanion');
+        let actions = [];
+
+        if (config.get('activate.refactor.extractVariable', true)) {
+            if (isExtractVariablePossible(selectedText)) {
+                actions.push(createRefactorAction(
+                    "Extract to variable",
+                    "phpcompanion.extractVariable",
+                    document,
+                    range
+                ));
+            }
+        }
+
+        if (config.get('activate.refactor.extractMethod', true)) {
             actions.push(createRefactorAction(
-                "Extract to variable",
-                "phpcompanion.extractVariable",
+                "Extract to method",
+                "phpcompanion.extractMethod",
                 document,
                 range
             ));
         }
-    }
 
-    if (config.get('activate.refactor.extractMethod', true)) {
-        actions.push(createRefactorAction(
-            "Extract to method",
-            "phpcompanion.extractMethod",
-            document,
-            range
-        ));
-    }
+        if (config.get('activate.refactor.inlineCode', true)) {
+            if (selectedText.match(/\s{2}/)) {
+                actions.push(createRewriteAction(
+                    "Inline code",
+                    "phpcompanion.inlineCode",
+                    document,
+                    range
+                ));
+            }
+        }
 
-    return actions;
-  }
+        return actions;
+    }
 }
 
 exports.extractMethod = extractMethod;
 exports.extractVariable = extractVariable;
+exports.inlineCode = inlineCode;
 exports.RefactorProvider = RefactorProvider;
 

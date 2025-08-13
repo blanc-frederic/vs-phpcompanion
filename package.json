@@ -60,6 +60,12 @@
 				"when": "resourceLangId == php"
 			},
 			{
+				"title": "Inline code",
+				"command": "phpcompanion.inlineCode",
+				"category": "Refactor",
+				"when": "resourceLangId == php"
+			},
+			{
 				"title": "Run tests",
 				"command": "phpcompanion.runTests",
 				"category": "PHP Companion",
@@ -130,6 +136,11 @@
 					"type": "boolean",
 					"default": true,
 					"description": "Add \"Extract Variable\" to Refactor menu for php files"
+				},
+				"phpcompanion.activate.refactor.inlineCode": {
+					"type": "boolean",
+					"default": true,
+					"description": "Add \"Inline code\" to Refactor menu for php files"
 				},
 				"phpcompanion.class.insertStrict": {
 					"type": "boolean",
