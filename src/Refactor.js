@@ -17,7 +17,9 @@ function isPartial(node, startOffset, endOffset) {
         node.kind === 'bin'
         && node.loc
         && node.loc.end.offset >= startOffset
+        && node.loc.end.offset > endOffset
         && node.loc.start.offset <= endOffset
+        && node.loc.start.offset < startOffset
     ) {
         return true;
     }
@@ -181,7 +183,7 @@ function getMethodCall(name, params, returnVariables, isPart) {
     return assign + '$this->' + name + '(' + mergeVariables(params) + ')' + (isPart ? '' : ';');
 }
 
-function getMethodDefinition(name, params, returnVariables, indent, body, part) {
+function getMethodDefinition(name, params, returnVariables, indent, body, isPart) {
     const newLine = `\n${indent}`;
     const paramList = mergeVariables(params);
     const signature = `private function ${name}(${paramList})`;
@@ -189,7 +191,7 @@ function getMethodDefinition(name, params, returnVariables, indent, body, part) 
     let returnType = `: void${newLine}`;
     let prefix = '';
     let returnStmt = '';
-    if (part) {
+    if (isPart) {
         returnType = ' ';
         prefix = 'return ';
         returnStmt = (body.substring(body.length -1) !== ';') ? ';' : '';
@@ -279,12 +281,19 @@ function extractMethod(document, range) {
         selectionEnd
     );
     if (!enclosingMethod) {
-        window.showErrorMessage('Unable to locate parent method');
+        window.showErrorMessage('Extract method : unable to locate parent method');
         return;
     }
 
     const selectedText = document.getText(range).trim();
-    const selectedAst = parser.parseCode('<?php ' + selectedText);
+    let selectedAst = null
+    try {
+        selectedAst = parser.parseCode('<?php ' + selectedText);
+    }  catch (e) {
+        window.showErrorMessage('Extract method : invalid selection');
+        return;
+    }
+
     const assignedInSelection = assignedVariables(selectedAst);
     const assignedBefore = assignedVariables(enclosingMethod, selectionStart);
     const paramList = usedVariables(selectedAst)
@@ -294,9 +303,10 @@ function extractMethod(document, range) {
 
     const isPart = isPartial(enclosingMethod, selectionStart, selectionEnd);
     if (isPart && returnVariables.length > 0) {
-        window.showErrorMessage('Unsafe refactoring : more than one returned variable in assignment');
+        window.showErrorMessage('Extract method : more than one returned variable in assignment');
         return;
     }
+    const endMark = selectedText.substring(selectedText.length -1) === ';'
 
     ask('Method name').then(async (name) => {
         if (name === undefined || name.length < 1) {
@@ -306,12 +316,20 @@ function extractMethod(document, range) {
         const insertPos = new Position(enclosingMethod.loc.end.line, 0);
 
         const edit = new WorkspaceEdit();
-        edit.insert(
-            document.uri,
-            insertPos,
-            getMethodDefinition(name, paramList, returnVariables, getEditorIndent(document), selectedText, isPart)
-        );
-        edit.replace(document.uri, range, getMethodCall(name, paramList, returnVariables, isPart));
+        edit.insert(document.uri, insertPos, getMethodDefinition(
+            name,
+            paramList,
+            returnVariables,
+            getEditorIndent(document),
+            selectedText,
+            isPart
+        ));
+        edit.replace(document.uri, range, getMethodCall(
+            name,
+            paramList,
+            returnVariables,
+            isPart && (! endMark)
+        ));
         await workspace.applyEdit(edit);
     });
 }
@@ -329,7 +347,7 @@ async function extractVariable(document, range) {
 
     const selectedText = document.getText(range).trim();
     if (!isExtractVariablePossible(selectedText)) {
-        window.showErrorMessage('Invalid selection to extract Variable');
+        window.showErrorMessage('Extract variable : invalid selection');
         return;
     }
 
@@ -341,7 +359,7 @@ async function extractVariable(document, range) {
         document.offsetAt(range.end)
     );
     if (!statementNode) {
-        window.showErrorMessage('Invalid selection to extract Variable');
+        window.showErrorMessage('Extract variable : invalid selection');
         return;
     }
 
@@ -367,22 +385,26 @@ class RefactorProvider {
 
     let actions = [];
 
-    const selectedText = document.getText(range).trim();
-    if (isExtractVariablePossible(selectedText)) {
-        actions.push(createRefactorAction(
-            "Extract to variable",
-            "phpcompanion.extractVariable",
-            document,
-            range
-        ));
+    if (config.get('activate.refactor.extractVariable', true)) {
+        const selectedText = document.getText(range).trim();
+        if (isExtractVariablePossible(selectedText)) {
+            actions.push(createRefactorAction(
+                "Extract to variable",
+                "phpcompanion.extractVariable",
+                document,
+                range
+            ));
+        }
     }
 
-    actions.push(createRefactorAction(
+    if (config.get('activate.refactor.extractMethod', true)) {
+        actions.push(createRefactorAction(
             "Extract to method",
             "phpcompanion.extractMethod",
             document,
             range
         ));
+    }
 
     return actions;
   }
