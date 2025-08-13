@@ -1,6 +1,6 @@
 const { commands, languages, Uri, window, workspace } = require('vscode')
 const { createPHPFile, replaceSelectionWithNamespace } = require('./src/generator')
-const { RefactorProvider, extractMethod, extractVariable } = require('./src/Refactor')
+const { RefactorProvider, extractMethod, extractVariable, inlineCode } = require('./src/Refactor')
 const { TestsRunner } = require('./src/TestsRunner')
 const { TestsStatusBar } = require('./src/TestsStatusBar')
 const { Process } = require('./src/Process')
@@ -28,9 +28,16 @@ function activate(context) {
         );
     }
 
+    if (config.get('activate.refactor.inlineCode', true)) {
+        context.subscriptions.push(
+            commands.registerCommand('phpcompanion.inlineCode', inlineCode)
+        );
+    }
+
     if (
         config.get('activate.refactor.extractMethod', true)
         || config.get('activate.refactor.extractVariable', true)
+        || config.get('activate.refactor.inlineCode', true)
     ) {
         context.subscriptions.push(
             languages.registerCodeActionsProvider('php', new RefactorProvider(), {

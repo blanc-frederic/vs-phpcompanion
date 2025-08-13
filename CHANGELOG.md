@@ -6,6 +6,7 @@
 
 - Refactor : extract method
 - Refactor : extract variable
+- Rewrite : inline code
 
 ## [2.2.0]
 
