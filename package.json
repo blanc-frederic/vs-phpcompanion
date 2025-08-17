@@ -22,10 +22,6 @@
 	"engines": {
 		"vscode": "^1.75.0"
 	},
-	"extensionKind": [
-		"ui",
-		"workspace"
-	],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/blanc-frederic/vs-phpcompanion.git"
