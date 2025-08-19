@@ -13,7 +13,7 @@ Features
 * Declare an interface if name ends with "Interface"
 * Add command and Keybindings to easily run tests
 * Open tests logs in a virtual document
-* PHP Refactoring support : "Extract method" and "Inline method"
+* PHP Refactoring support : "Extract method" and "Extract variable"
 
 Create new PHP files
 --------------------
@@ -30,6 +30,13 @@ Insert namespace in PHP files
 Select text or move cursor to the desired position and right click, then choose "Insert namespace" menu item
 
 ![Insert namespace screenshot](https://raw.githubusercontent.com/blanc-frederic/vs-phpcompanion/main/resources/insert_namespace.png)
+
+Refactoring
+-----------
+
+Select text and click on the bulb icon to choose wich refactoring to apply
+
+![Refactoring menu screenshot](https://raw.githubusercontent.com/blanc-frederic/vs-phpcompanion/main/resources/refactor.png)
 
 Snippets
 --------
