@@ -7,6 +7,9 @@
 - Refactor : extract method
 - Refactor : extract variable
 - Rewrite : inline code
+- Configuration : declare(strict_types=1) is now optionnal
+- Configuration : "final" keyword could be added to new class by default
+- Detect "Trait" suffixes to transforme new "class" into "trait"
 
 ## [2.2.0]
 

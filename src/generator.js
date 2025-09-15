@@ -25,7 +25,7 @@ function createPHPFile(folder) {
 
     interact.ask('Class name').then(name => {
         if (name.toLowerCase().endsWith('.php')) {
-            name = name.substring(0, name.length -4)
+            name = name.substring(0, name.length - 4)
         }
 
         if (name === undefined || name.length < 1) {
@@ -71,10 +71,12 @@ function generate(name, ns, category) {
         extending = ' extends TestCase'
     }
 
-    const config = workspace.getConfiguration('phpcompanion');
+    if (category == 'class' && getOption('class.insertFinal')) {
+        category = 'final class'
+    }
 
     return '<?php\n\n'
-        + (config.get('class.insertStrict', true) ? 'declare(strict_types=1);\n\n' : '')
+        + (getOption('class.insertStrict') ? 'declare(strict_types=1);\n\n' : '')
         + 'namespace ' + ns + ';\n\n'
         + uses
         + category + ' ' + name + extending + '\n'
@@ -94,10 +96,14 @@ function detectCategory(name) {
 }
 
 function detectSuffix(name, option, suffix) {
-    const config = workspace.getConfiguration('phpcompanion');
-    return config.get(option, true)
+    return getOption(option)
         && name !== suffix
         && name.endsWith(suffix)
+}
+
+function getOption(option) {
+    const config = workspace.getConfiguration('phpcompanion')
+    return config.get(option, true)
 }
 
 exports.createPHPFile = createPHPFile

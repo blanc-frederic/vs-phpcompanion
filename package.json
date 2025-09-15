@@ -143,6 +143,11 @@
 					"default": true,
 					"description": "Insert 'declare(strict_types=1);' into generated classes"
 				},
+				"phpcompanion.class.insertFinal": {
+					"type": "boolean",
+					"default": true,
+					"description": "Add 'final' to generated classes"
+				},
 				"phpcompanion.class.composerJson": {
 					"type": "string",
 					"default": "composer.json",
