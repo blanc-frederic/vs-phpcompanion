@@ -5,3 +5,4 @@ src/**
 .gitignore
 extension.js
 *.vsix
+Makefile
