@@ -1,6 +1,6 @@
 const { Uri, workspace } = require('vscode')
-const path = require('path')
-const fs = require('fs')
+const path = require('node:path')
+const fs = require('node:fs')
 
 function getNamespaceFromPath(filename) {
     let vendorData = getNamespaceFromComposer(filename)
@@ -16,7 +16,7 @@ function getNamespaceFromPath(filename) {
         return vendorData.namespace
     }
 
-    let namespace = pathElements.slice(0, pathElements.length - 1).map(element => {
+    let namespace = pathElements.slice(0, -1).map(element => {
         return element.charAt(0).toUpperCase() + element.slice(1)
     }).join('\\')
 
@@ -49,7 +49,11 @@ function getNamespaceFromComposer(filename) {
         'startsWith': ''
     }
 
-    const composer = loadJson(getComposerFileFor(filename))
+    const composerFilename = getComposerFileFor(filename)
+    const relativeComposer = workspace.asRelativePath(composerFilename)
+    const composerDir = (relativeComposer.length <= 13) ? '' : relativeComposer.substring(0, relativeComposer.length - 13)
+
+    const composer = loadJson(composerFilename)
     if (!composer) {
         return defaultVendor
     }
@@ -57,45 +61,48 @@ function getNamespaceFromComposer(filename) {
     const relativeFilename = workspace.asRelativePath(filename)
         .replace(path.sep, '/')
 
-    const sources = ['autoload', 'autoload-dev']
-    for (let index = 0; index < sources.length; index++) {
-        const env = sources[index]
-
-        if (composer[env] && composer[env]['psr-4']) {
+    for (let env of ['autoload', 'autoload-dev']) {
+        if (composer[env]?.['psr-4']) {
             for (let vendor in composer[env]['psr-4']) {
-                let folder = composer[env]['psr-4'][vendor]
-
+                let folder = composerDir + composer[env]['psr-4'][vendor]
                 if (relativeFilename.startsWith(folder)) {
-                    if (vendor.endsWith('\\')) {
-                        vendor = vendor.substring(0, vendor.length - 1)
-                    }
-
-                    if (!folder.endsWith('/')) {
-                        folder += '/'
-                    }
-
-                    return {
-                        'namespace': vendor,
-                        'startsWith': folder
-                    }
+                    return createVendor(vendor, folder)
                 }
             }
         }
     }
 
-    if (relativeFilename.startsWith('src/')) {
-        defaultVendor.startsWith = 'src/'
-    } else if (relativeFilename.startsWith('tests/')) {
-        defaultVendor.startsWith = 'tests/'
-    } else if (defaultVendor.namespace !== '' && relativeFilename.startsWith('app/')) {
-        defaultVendor.startsWith = 'app/'
+    return detectVendor(relativeFilename, composerDir, defaultVendor)
+}
+
+function createVendor(vendor, folder) {
+    if (vendor.endsWith('\\')) {
+        vendor = vendor.substring(0, vendor.length - 1)
     }
 
+    if (!folder.endsWith('/')) {
+        folder += '/'
+    }
+
+    return {
+        'namespace': vendor,
+        'startsWith': folder
+    }
+}
+
+function detectVendor(relativeFilename, composerDir, defaultVendor) {
+    if (relativeFilename.startsWith(composerDir + 'src/')) {
+        defaultVendor.startsWith = composerDir + 'src/'
+    } else if (relativeFilename.startsWith(composerDir + 'tests/')) {
+        defaultVendor.startsWith = composerDir + 'tests/'
+    } else if (defaultVendor.namespace !== '' && relativeFilename.startsWith(composerDir + 'app/')) {
+        defaultVendor.startsWith = composerDir + 'app/'
+    }
     return defaultVendor
 }
 
 function loadJson(filename) {
-    let content = '{}'
+    let content
     try {
         content = fs.readFileSync(filename)
     } catch {

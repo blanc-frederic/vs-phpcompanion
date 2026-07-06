@@ -1,5 +1,11 @@
 # PHP Companion extension for Visual Studio Code
 
+## [3.0.1]
+
+### Fixed
+
+- Incorrect namespace if composer.json is in a subfolder
+
 ## [3.0.0]
 
 ### Added

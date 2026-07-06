@@ -1,6 +1,6 @@
 {
 	"name": "vs-phpcompanion",
-	"version": "3.0.0",
+	"version": "3.0.1",
 	"displayName": "PHP Companion",
 	"description": "Create new PHP class, run tests, refactor, insert namespace, ...",
 	"categories": [
