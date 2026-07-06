@@ -14,7 +14,7 @@ function replaceSelectionWithNamespace() {
 }
 
 function createPHPFile(folder) {
-    if (!folder || !folder.fsPath) {
+    if (! folder?.fsPath) {
         interact.askFolder().then(folder => {
             if (folder !== undefined) {
                 createPHPFile(Uri.parse(folder))
@@ -49,15 +49,13 @@ function createNewFile(filename, content) {
         window.showErrorMessage(
             'File "' + workspace.asRelativePath(fileUri) + '" already exists'
         )
-    }, () => {
-        workspace.fs.writeFile(fileUri, new TextEncoder().encode(content)
-        ).then(() => {
-            workspace.openTextDocument(fileUri).then(
-                document => window.showTextDocument(document).then(
-                    document => interact.moveCursorTo(document.document.lineCount - 3, 4)
-                )
+    }, async () => {
+        await workspace.fs.writeFile(fileUri, new TextEncoder().encode(content))
+        workspace.openTextDocument(fileUri).then(
+            document => window.showTextDocument(document).then(
+                document => interact.moveCursorTo(document.document.lineCount - 3, 4)
             )
-        })
+        )
     })
 }
 
