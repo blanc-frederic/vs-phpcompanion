@@ -393,7 +393,12 @@ async function inlineCode(document, range) {
     if (! document) return;
 
     const selectedText = document.getText(range).trim();
-    const newText = selectedText.replaceAll(/\s+/g, ' ');
+    const newText = selectedText
+        .replaceAll(/\s{2,}/g, ' ')
+        .replaceAll(/\s\)/g, ')')
+        .replaceAll(/\(\s/g, '(')
+        .replaceAll(',)', ')')
+    ;
 
     if (selectedText !== newText) {
         const edit = new WorkspaceEdit();

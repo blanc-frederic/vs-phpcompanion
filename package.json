@@ -1,6 +1,6 @@
 {
 	"name": "vs-phpcompanion",
-	"version": "3.0.1",
+	"version": "3.1.0",
 	"displayName": "PHP Companion",
 	"description": "Create new PHP class, run tests, refactor, insert namespace, ...",
 	"categories": [
@@ -147,6 +147,11 @@
 					"type": "boolean",
 					"default": true,
 					"description": "Add 'final' to generated classes"
+				},
+				"phpcompanion.class.insertReadonly": {
+					"type": "boolean",
+					"default": true,
+					"description": "Add 'readonly' to generated classes"
 				},
 				"phpcompanion.class.composerJson": {
 					"type": "string",

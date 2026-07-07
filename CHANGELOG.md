@@ -1,6 +1,10 @@
 # PHP Companion extension for Visual Studio Code
 
-## [3.0.1]
+## [3.1.0]
+
+### Added
+
+- Configuration : "readonly" keyword could be added to new class by default
 
 ### Fixed
 

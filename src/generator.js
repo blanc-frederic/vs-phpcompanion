@@ -69,8 +69,13 @@ function generate(name, ns, category) {
         extending = ' extends TestCase'
     }
 
-    if (category == 'class' && getOption('class.insertFinal')) {
-        category = 'final class'
+    if (category == 'class') {
+        if (getOption('class.insertReadonly')) {
+            category = 'readonly class'
+        }
+        if (getOption('class.insertFinal')) {
+            category = 'final ' + category
+        }
     }
 
     return '<?php\n\n'
